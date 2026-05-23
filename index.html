@@ -1,12 +1,4 @@
-bash
-
-python3 << 'EOF'
-img0 = open('/home/claude/img0.b64').read()
-img1 = open('/home/claude/img1.b64').read()
-img2 = open('/home/claude/img2.b64').read()
-img3 = open('/home/claude/img3.b64').read()
-
-html = f'''<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8"/>
@@ -16,7 +8,7 @@ html = f'''<!DOCTYPE html>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 /* ── TOKENS ── */
-:root{{
+:root{
   --pink:#E91E8C;--pink-d:#C2185B;--pink-dd:#880E4F;
   --pink-l:rgba(233,30,140,.12);--pink-ll:rgba(233,30,140,.07);
   --blue:#1565C0;--blue-p:rgba(21,101,192,.1);
@@ -28,140 +20,140 @@ html = f'''<!DOCTYPE html>
   --bg:#F8F9FA;--white:#FFFFFF;
   --nav-w:66px;--rad:14px;
   --shadow:0 4px 24px rgba(0,0,0,.08);
-}}
-*{{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}}
-body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      background:var(--bg);color:#1A1C2E;overflow:hidden;height:100vh;display:flex}}
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:var(--bg);color:#1A1C2E;overflow:hidden;height:100vh;display:flex}
 /* ── SIDENAV ── */
-.sidenav{{width:var(--nav-w);background:var(--white);display:flex;flex-direction:column;
+.sidenav{width:var(--nav-w);background:var(--white);display:flex;flex-direction:column;
   align-items:center;border-right:1px solid var(--gray-l);
   box-shadow:2px 0 16px rgba(0,0,0,.06);position:fixed;left:0;top:0;bottom:0;
-  z-index:300;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}}
-.nav-logo-area{{width:100%;padding:calc(env(safe-area-inset-top,10px)+8px) 0 8px;
+  z-index:300;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
+.nav-logo-area{width:100%;padding:calc(env(safe-area-inset-top,10px)+8px) 0 8px;
   display:flex;flex-direction:column;align-items:center;gap:4px;
-  background:linear-gradient(160deg,var(--pink) 0%,var(--pink-d) 100%);flex-shrink:0}}
-.nav-item{{width:100%;display:flex;flex-direction:column;align-items:center;
+  background:linear-gradient(160deg,var(--pink) 0%,var(--pink-d) 100%);flex-shrink:0}
+.nav-item{width:100%;display:flex;flex-direction:column;align-items:center;
   padding:10px 4px;cursor:pointer;border:none;background:none;font-family:inherit;
   gap:3px;border-right:3px solid transparent;transition:all .18s;
-  color:var(--gray);position:relative}}
-.nav-item.active{{background:var(--pink-ll);border-right-color:var(--pink-d);color:var(--pink-d)}}
-.nav-icon{{font-size:18px;line-height:1}}
-.nav-label{{font-size:8px;font-weight:700;letter-spacing:.03em;text-align:center;line-height:1.2}}
-.nav-badge{{position:absolute;top:6px;right:5px;background:var(--red);color:#fff;
-  border-radius:8px;padding:1px 5px;font-size:9px;font-weight:800;line-height:1.2}}
-.content{{flex:1;margin-left:var(--nav-w);overflow-y:auto;height:100vh;background:var(--bg)}}
+  color:var(--gray);position:relative}
+.nav-item.active{background:var(--pink-ll);border-right-color:var(--pink-d);color:var(--pink-d)}
+.nav-icon{font-size:18px;line-height:1}
+.nav-label{font-size:8px;font-weight:700;letter-spacing:.03em;text-align:center;line-height:1.2}
+.nav-badge{position:absolute;top:6px;right:5px;background:var(--red);color:#fff;
+  border-radius:8px;padding:1px 5px;font-size:9px;font-weight:800;line-height:1.2}
+.content{flex:1;margin-left:var(--nav-w);overflow-y:auto;height:100vh;background:var(--bg)}
 /* ── PAGES ── */
-.page{{display:none;padding:16px;min-height:100%}}
-.page.active{{display:block}}
+.page{display:none;padding:16px;min-height:100%}
+.page.active{display:block}
 /* ── HEADER ── */
-.page-header{{background:var(--white);border-radius:var(--rad);padding:14px 16px;
+.page-header{background:var(--white);border-radius:var(--rad);padding:14px 16px;
   margin-bottom:14px;display:flex;align-items:center;gap:12px;
-  box-shadow:var(--shadow);}}
-.page-header-logo{{flex:1}}
-.hdr-info{{display:flex;flex-direction:column;gap:3px}}
+  box-shadow:var(--shadow);}
+.page-header-logo{flex:1}
+.hdr-info{display:flex;flex-direction:column;gap:3px}
 /* ── CARDS ── */
-.card{{background:var(--white);border-radius:var(--rad);padding:14px;
-  box-shadow:var(--shadow);margin-bottom:12px}}
-.card-title{{font-size:13px;font-weight:800;color:#1A1C2E;margin-bottom:10px;
-  display:flex;align-items:center;gap:6px}}
+.card{background:var(--white);border-radius:var(--rad);padding:14px;
+  box-shadow:var(--shadow);margin-bottom:12px}
+.card-title{font-size:13px;font-weight:800;color:#1A1C2E;margin-bottom:10px;
+  display:flex;align-items:center;gap:6px}
 /* ── BUTTONS ── */
-.btn{{border:none;border-radius:10px;padding:10px 16px;font-size:13px;
+.btn{border:none;border-radius:10px;padding:10px 16px;font-size:13px;
   font-weight:700;cursor:pointer;transition:all .18s;font-family:inherit;
-  display:inline-flex;align-items:center;gap:6px}}
-.btn-pink{{background:linear-gradient(135deg,var(--pink),var(--pink-d));color:#fff}}
-.btn-pink:active{{opacity:.85}}
-.btn-ghost{{background:var(--gray-l);color:var(--gray-d)}}
-.btn-green{{background:var(--green-p);color:var(--green);border:1px solid rgba(27,94,32,.2)}}
-.btn-red{{background:var(--red-p);color:var(--red);border:1px solid rgba(198,40,40,.2)}}
-.btn-block{{width:100%;justify-content:center}}
-.btn-sm{{padding:7px 12px;font-size:12px}}
+  display:inline-flex;align-items:center;gap:6px}
+.btn-pink{background:linear-gradient(135deg,var(--pink),var(--pink-d));color:#fff}
+.btn-pink:active{opacity:.85}
+.btn-ghost{background:var(--gray-l);color:var(--gray-d)}
+.btn-green{background:var(--green-p);color:var(--green);border:1px solid rgba(27,94,32,.2)}
+.btn-red{background:var(--red-p);color:var(--red);border:1px solid rgba(198,40,40,.2)}
+.btn-block{width:100%;justify-content:center}
+.btn-sm{padding:7px 12px;font-size:12px}
 /* ── INPUTS ── */
-.field{{margin-bottom:12px}}
-.field label{{font-size:11px;font-weight:700;color:var(--gray-d);
-  text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:5px}}
-.field input,.field select,.field textarea{{width:100%;border:1.5px solid var(--gray-l);
+.field{margin-bottom:12px}
+.field label{font-size:11px;font-weight:700;color:var(--gray-d);
+  text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;border:1.5px solid var(--gray-l);
   border-radius:10px;padding:10px 12px;font-size:14px;font-family:inherit;
-  background:var(--white);color:#1A1C2E;outline:none;transition:border .15s}}
-.field input:focus,.field select:focus,.field textarea:focus{{border-color:var(--pink)}}
-.field textarea{{resize:vertical;min-height:70px}}
+  background:var(--white);color:#1A1C2E;outline:none;transition:border .15s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--pink)}
+.field textarea{resize:vertical;min-height:70px}
 /* ── BADGES ── */
-.badge{{display:inline-block;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:800}}
-.bg{{background:var(--green-p);color:var(--green)}}
-.bb{{background:var(--blue-p);color:var(--blue)}}
-.by{{background:var(--yellow-p);color:var(--yellow)}}
-.br{{background:var(--red-p);color:var(--red)}}
-.bgr{{background:var(--gray-l);color:var(--gray)}}
-.role-admin{{background:linear-gradient(135deg,var(--pink-d),var(--pink-dd));
-  color:#fff;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:800}}
-.role-colab{{background:var(--blue-p);color:var(--blue);padding:3px 10px;
-  border-radius:20px;font-size:10px;font-weight:800}}
-.role-visit{{background:var(--gray-l);color:var(--gray);padding:3px 10px;
-  border-radius:20px;font-size:10px;font-weight:800}}
+.badge{display:inline-block;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:800}
+.bg{background:var(--green-p);color:var(--green)}
+.bb{background:var(--blue-p);color:var(--blue)}
+.by{background:var(--yellow-p);color:var(--yellow)}
+.br{background:var(--red-p);color:var(--red)}
+.bgr{background:var(--gray-l);color:var(--gray)}
+.role-admin{background:linear-gradient(135deg,var(--pink-d),var(--pink-dd));
+  color:#fff;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:800}
+.role-colab{background:var(--blue-p);color:var(--blue);padding:3px 10px;
+  border-radius:20px;font-size:10px;font-weight:800}
+.role-visit{background:var(--gray-l);color:var(--gray);padding:3px 10px;
+  border-radius:20px;font-size:10px;font-weight:800}
 /* ── LOGIN ── */
-.login-screen{{position:fixed;inset:0;
+.login-screen{position:fixed;inset:0;
   background:linear-gradient(160deg,var(--pink) 0%,var(--pink-d) 50%,var(--pink-dd) 100%);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  z-index:1000;padding:24px}}
-.login-card{{background:rgba(255,255,255,.96);border-radius:24px;padding:26px 20px;
-  width:100%;max-width:340px;box-shadow:0 20px 60px rgba(0,0,0,.22)}}
-.login-error{{background:var(--red-p);color:var(--red);border-radius:10px;
+  z-index:1000;padding:24px}
+.login-card{background:rgba(255,255,255,.96);border-radius:24px;padding:26px 20px;
+  width:100%;max-width:340px;box-shadow:0 20px 60px rgba(0,0,0,.22)}
+.login-error{background:var(--red-p);color:var(--red);border-radius:10px;
   padding:10px 13px;font-size:13px;font-weight:600;margin-bottom:12px;
-  display:none;text-align:center}}
+  display:none;text-align:center}
 /* ── MODAL ── */
-.modal-overlay{{position:fixed;inset:0;background:rgba(0,0,0,.45);
-  z-index:500;display:none;align-items:flex-end;justify-content:center}}
-.modal-overlay.open{{display:flex}}
-.modal{{background:var(--white);border-radius:20px 20px 0 0;
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);
+  z-index:500;display:none;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--white);border-radius:20px 20px 0 0;
   padding:20px 16px calc(env(safe-area-inset-bottom,0px)+20px);
-  width:100%;max-width:480px;max-height:92vh;overflow-y:auto}}
-.modal-title{{font-size:16px;font-weight:800;margin-bottom:16px;
-  display:flex;align-items:center;gap:8px}}
+  width:100%;max-width:480px;max-height:92vh;overflow-y:auto}
+.modal-title{font-size:16px;font-weight:800;margin-bottom:16px;
+  display:flex;align-items:center;gap:8px}
 /* ── TOAST ── */
-.toast{{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px)+16px);
+.toast{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px)+16px);
   left:calc(var(--nav-w)+10px);right:10px;background:#1A1C2E;color:#fff;
   padding:11px 14px;border-radius:13px;font-size:13px;font-weight:700;
-  opacity:0;transition:all .25s;z-index:999;text-align:center;pointer-events:none}}
-.toast.show{{opacity:1}}
+  opacity:0;transition:all .25s;z-index:999;text-align:center;pointer-events:none}
+.toast.show{opacity:1}
 /* ── MISC ── */
-.empty{{text-align:center;padding:32px 16px;color:var(--gray)}}
-.empty-icon{{font-size:36px;margin-bottom:8px}}
-.cont-card{{background:var(--white);border-radius:12px;padding:12px 14px;
+.empty{text-align:center;padding:32px 16px;color:var(--gray)}
+.empty-icon{font-size:36px;margin-bottom:8px}
+.cont-card{background:var(--white);border-radius:12px;padding:12px 14px;
   margin-bottom:8px;box-shadow:0 2px 8px rgba(0,0,0,.05);
   display:flex;align-items:center;gap:10px;cursor:pointer;
-  border-left:4px solid transparent}}
-.home-grid{{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}}
-.home-tile{{background:var(--white);border-radius:14px;padding:14px 8px;
+  border-left:4px solid transparent}
+.home-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.home-tile{background:var(--white);border-radius:14px;padding:14px 8px;
   text-align:center;cursor:pointer;box-shadow:var(--shadow);
-  transition:transform .15s}}
-.home-tile:active{{transform:scale(.96)}}
-.tile-icon{{font-size:24px;margin-bottom:6px}}
-.tile-label{{font-size:10px;font-weight:800;color:var(--gray-d)}}
-.stats-row{{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}}
-.stat-box{{background:var(--white);border-radius:12px;padding:12px;
-  box-shadow:var(--shadow);text-align:center}}
-.stat-num{{font-size:28px;font-weight:900;color:var(--pink)}}
-.stat-lbl{{font-size:10px;color:var(--gray);font-weight:600}}
-.proto-card{{background:var(--white);border-radius:12px;padding:12px 14px;
+  transition:transform .15s}
+.home-tile:active{transform:scale(.96)}
+.tile-icon{font-size:24px;margin-bottom:6px}
+.tile-label{font-size:10px;font-weight:800;color:var(--gray-d)}
+.stats-row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+.stat-box{background:var(--white);border-radius:12px;padding:12px;
+  box-shadow:var(--shadow);text-align:center}
+.stat-num{font-size:28px;font-weight:900;color:var(--pink)}
+.stat-lbl{font-size:10px;color:var(--gray);font-weight:600}
+.proto-card{background:var(--white);border-radius:12px;padding:12px 14px;
   margin-bottom:8px;box-shadow:0 2px 8px rgba(0,0,0,.05);cursor:pointer;
-  border-left:4px solid var(--gray-l)}}
-.msg-bubble{{padding:10px 14px;border-radius:14px;margin-bottom:8px;
-  max-width:90%;font-size:13px;line-height:1.5}}
-.msg-interno{{background:var(--gray-l);align-self:flex-start}}
-.msg-wa{{background:var(--green-p);border:1px solid rgba(27,94,32,.2);align-self:flex-end}}
-.msg-sistema{{background:var(--yellow-p);text-align:center;font-size:11px;
-  color:var(--yellow);align-self:center;max-width:100%}}
-.chat-area{{display:flex;flex-direction:column;gap:4px;padding:8px 0}}
-.pub-screen{{position:fixed;inset:0;background:var(--bg);z-index:900;
-  overflow-y:auto;display:none}}
+  border-left:4px solid var(--gray-l)}
+.msg-bubble{padding:10px 14px;border-radius:14px;margin-bottom:8px;
+  max-width:90%;font-size:13px;line-height:1.5}
+.msg-interno{background:var(--gray-l);align-self:flex-start}
+.msg-wa{background:var(--green-p);border:1px solid rgba(27,94,32,.2);align-self:flex-end}
+.msg-sistema{background:var(--yellow-p);text-align:center;font-size:11px;
+  color:var(--yellow);align-self:center;max-width:100%}
+.chat-area{display:flex;flex-direction:column;gap:4px;padding:8px 0}
+.pub-screen{position:fixed;inset:0;background:var(--bg);z-index:900;
+  overflow-y:auto;display:none}
 /* ── LOADING ── */
-.loading-overlay{{position:fixed;inset:0;background:rgba(255,255,255,.8);
+.loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,.8);
   display:none;align-items:center;justify-content:center;z-index:2000;
-  font-size:28px;flex-direction:column;gap:12px}}
-.loading-overlay.show{{display:flex}}
-.spinner{{width:40px;height:40px;border:4px solid var(--gray-l);
+  font-size:28px;flex-direction:column;gap:12px}
+.loading-overlay.show{display:flex}
+.spinner{width:40px;height:40px;border:4px solid var(--gray-l);
   border-top-color:var(--pink);border-radius:50%;
-  animation:spin .8s linear infinite}}
-@keyframes spin{{to{{transform:rotate(360deg)}}}}
+  animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -179,7 +171,7 @@ body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 <div class="login-screen" id="loginScreen">
   <div class="login-card">
     <div style="text-align:center;margin-bottom:18px">
-      <img src="{img0}" style="width:100%;max-width:260px;height:auto;display:block;margin:0 auto" alt="Luana Marques"/>
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='80' viewBox='0 0 260 80'%3E%3Crect width='260' height='80' fill='%23E91E8C' rx='12'/%3E%3Ctext x='130' y='48' font-family='Arial,sans-serif' font-size='22' font-weight='900' fill='white' text-anchor='middle'%3ELuana Marques%3C/text%3E%3C/svg%3E" style="width:100%;max-width:260px;height:auto;display:block;margin:0 auto" alt="Luana Marques"/>
       <p style="font-size:10px;color:var(--gray);letter-spacing:.15em;text-transform:uppercase;margin-top:6px">Vereadora · Novo Gama · GO</p>
     </div>
     <div class="login-error" id="login-error">❌ E-mail ou senha incorretos</div>
@@ -205,7 +197,7 @@ body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 <div class="pub-screen" id="pubScreen">
   <div style="max-width:480px;margin:0 auto;padding:20px">
     <div style="text-align:center;margin-bottom:20px">
-      <img src="{img0}" style="width:80%;max-width:240px;height:auto;display:block;margin:0 auto"/>
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='80' viewBox='0 0 260 80'%3E%3Crect width='260' height='80' fill='%23E91E8C' rx='12'/%3E%3Ctext x='130' y='48' font-family='Arial,sans-serif' font-size='22' font-weight='900' fill='white' text-anchor='middle'%3ELuana Marques%3C/text%3E%3C/svg%3E" style="width:80%;max-width:240px;height:auto;display:block;margin:0 auto"/>
       <h2 style="font-size:17px;font-weight:800;margin-top:12px">Cadastro do Eleitor</h2>
       <p style="font-size:12px;color:var(--gray)">Novo Gama · GO</p>
     </div>
@@ -251,7 +243,7 @@ body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 <!-- ════════════════ APP SHELL ════════════════ -->
 <nav class="sidenav">
   <div class="nav-logo-area">
-    <img src="{img2}" width="28" height="28" style="display:block" alt="Diamante"/>
+    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Ccircle cx='14' cy='14' r='14' fill='white'/%3E%3Ctext x='14' y='19' font-family='Arial' font-size='14' text-anchor='middle'%3E💎%3C/text%3E%3C/svg%3E" width="28" height="28" style="display:block" alt="Diamante"/>
     <span style="font-size:7px;font-weight:900;color:#fff;letter-spacing:.05em;text-align:center;line-height:1.2">GABINETE</span>
   </div>
   <button class="nav-item active" id="nav-inicio"     onclick="goTo('inicio')">
@@ -290,7 +282,7 @@ body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 <div class="page active" id="page-inicio">
   <div class="page-header">
     <div class="page-header-logo">
-      <img src="{img1}" style="height:55px;width:auto;display:block" alt="Luana Marques"/>
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='55' viewBox='0 0 200 55'%3E%3Crect width='200' height='55' fill='%23E91E8C' rx='8'/%3E%3Ctext x='100' y='33' font-family='Arial,sans-serif' font-size='16' font-weight='900' fill='white' text-anchor='middle'%3ELuana Marques%3C/text%3E%3C/svg%3E" style="height:55px;width:auto;display:block" alt="Luana Marques"/>
     </div>
     <div class="hdr-info" style="text-align:right">
       <div id="hdrRole"></div>
@@ -448,7 +440,7 @@ body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 <!-- ═══ PERFIL ═══ -->
 <div class="page" id="page-perfil">
   <div class="page-header" style="flex-direction:column;align-items:center;gap:8px">
-    <img src="{img3}" style="height:75px;width:auto;display:block;margin:0 auto" alt="Luana Marques"/>
+    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='75' viewBox='0 0 200 75'%3E%3Crect width='200' height='75' fill='%23E91E8C' rx='10'/%3E%3Ctext x='100' y='44' font-family='Arial,sans-serif' font-size='18' font-weight='900' fill='white' text-anchor='middle'%3ELuana Marques%3C/text%3E%3C/svg%3E" style="height:75px;width:auto;display:block;margin:0 auto" alt="Luana Marques"/>
     <div id="perfil-role-badge"></div>
     <p style="font-size:11px;color:var(--gray)">Usuário: <strong id="perfil-user"></strong></p>
   </div>
@@ -619,57 +611,57 @@ body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 // CONFIGURAÇÃO SUPABASE
 // ⚠️ Substitua pelos seus dados do projeto Supabase!
 // ═══════════════════════════════════════════════════════
-const SUPABASE_URL = 'https://ubgzimtyrsazzghbqxgl.supabase.co/rest/v1/';
+const SUPABASE_URL = 'https://ubgzimtyrsazzghbqxgl.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InViZ3ppbXR5cnNhenpnaGJxeGdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1MTg4MzIsImV4cCI6MjA5NTA5NDgzMn0.DJSWNbpQ2BG1wL5KibbEuAEtYhiVZMW9gFqUAzPLQxY';
-const {{ createClient }} = supabase;
+const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ═══ ESTADO ═══
 let currentUser  = null;
 let currentPerfil = null;
-let waConfig     = JSON.parse(localStorage.getItem('wa_config')||'{{}}');
+let waConfig     = JSON.parse(localStorage.getItem('wa_config')||'{}');
 
 // ═══ LOADING ═══
-function showLoad(){{ document.getElementById('loadingOverlay').classList.add('show') }}
-function hideLoad(){{ document.getElementById('loadingOverlay').classList.remove('show') }}
+function showLoad(){ document.getElementById('loadingOverlay').classList.add('show') }
+function hideLoad(){ document.getElementById('loadingOverlay').classList.remove('show') }
 
 // ═══ TOAST ═══
-function toast(msg){{
+function toast(msg){
   const el = document.getElementById('toastEl');
   el.textContent = msg; el.classList.add('show');
   setTimeout(()=>el.classList.remove('show'), 2800);
-}}
+}
 
 // ═══ MODAIS ═══
-function openM(id){{ document.getElementById(id).classList.add('open') }}
-function closeM(id){{ document.getElementById(id).classList.remove('open') }}
+function openM(id){ document.getElementById(id).classList.add('open') }
+function closeM(id){ document.getElementById(id).classList.remove('open') }
 document.querySelectorAll('.modal-overlay').forEach(o=>
-  o.addEventListener('click', e=>{{ if(e.target===o) o.classList.remove('open') }}));
+  o.addEventListener('click', e=>{ if(e.target===o) o.classList.remove('open') }));
 
 // ═══════════════════════════════════════════════════════
 // AUTH
 // ═══════════════════════════════════════════════════════
-async function doLogin(){{
+async function doLogin(){
   const email = document.getElementById('login-email').value.trim();
   const pass  = document.getElementById('login-pass').value;
   const errEl = document.getElementById('login-error');
   const btn   = document.getElementById('login-btn');
   errEl.style.display='none'; btn.disabled=true; btn.textContent='Entrando...';
-  try{{
-    const {{ data, error }} = await db.auth.signInWithPassword({{ email, password: pass }});
+  try{
+    const { data, error } = await db.auth.signInWithPassword({ email, password: pass });
     if(error) throw error;
     await iniciarSessao(data.user);
-  }} catch(e){{
+  } catch(e){
     errEl.style.display='block';
     errEl.textContent='❌ '+(e.message||'Erro ao fazer login');
-  }}
+  }
   btn.disabled=false; btn.textContent='Entrar no Gabinete';
-}}
+}
 
-async function iniciarSessao(user){{
+async function iniciarSessao(user){
   currentUser = user;
   // Busca perfil
-  const {{ data: perfil }} = await db.from('perfis').select('*').eq('id',user.id).single();
+  const { data: perfil } = await db.from('perfis').select('*').eq('id',user.id).single();
   currentPerfil = perfil;
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('pubScreen').style.display='none';
@@ -683,43 +675,43 @@ async function iniciarSessao(user){{
   await renderWAHistorico();
   await renderUsers();
   // Admin features
-  if(currentPerfil?.role==='admin'){{
+  if(currentPerfil?.role==='admin'){
     document.getElementById('admin-users').style.display='block';
-  }}
+  }
   // Link de captação
   document.getElementById('captacao-link').textContent = window.location.href.split('?')[0]+'?cadastro=1';
   // Atualiza perfil page
   document.getElementById('perfil-user').textContent = currentPerfil?.nome || user.email;
   document.getElementById('perfil-nome-input').value  = currentPerfil?.nome || '';
   document.getElementById('perfil-wa-input').value    = currentPerfil?.whatsapp || '';
-  const roleMap={{admin:'🔑 Admin',colaborador:'✏️ Colaborador',visitante:'👁️ Visitante'}};
-  const cls={{admin:'role-admin',colaborador:'role-colab',visitante:'role-visit'}};
+  const roleMap={admin:'🔑 Admin',colaborador:'✏️ Colaborador',visitante:'👁️ Visitante'};
+  const cls={admin:'role-admin',colaborador:'role-colab',visitante:'role-visit'};
   const r = currentPerfil?.role||'visitante';
-  document.getElementById('perfil-role-badge').innerHTML=`<span class="${{cls[r]}}">${{roleMap[r]}}</span>`;
+  document.getElementById('perfil-role-badge').innerHTML=`<span class="${cls[r]}">${roleMap[r]}</span>`;
   // WA config
   if(waConfig.instance) document.getElementById('wa-instance').value = waConfig.instance;
   if(waConfig.token)    document.getElementById('wa-token').value    = waConfig.token;
-}}
+}
 
-async function doLogout(){{
+async function doLogout(){
   await db.auth.signOut();
   currentUser=null; currentPerfil=null;
   document.getElementById('loginScreen').style.display='flex';
-}}
+}
 
-function updateHeader(){{
+function updateHeader(){
   if(!currentPerfil) return;
-  const roleMap={{admin:'🔑 Admin',colaborador:'✏️ Colaborador',visitante:'👁️ Visitante'}};
-  const cls={{admin:'role-admin',colaborador:'role-colab',visitante:'role-visit'}};
+  const roleMap={admin:'🔑 Admin',colaborador:'✏️ Colaborador',visitante:'👁️ Visitante'};
+  const cls={admin:'role-admin',colaborador:'role-colab',visitante:'role-visit'};
   const r = currentPerfil.role||'visitante';
-  document.getElementById('hdrRole').innerHTML=`<span class="${{cls[r]}}">${{roleMap[r]}}</span>`;
+  document.getElementById('hdrRole').innerHTML=`<span class="${cls[r]}">${roleMap[r]}</span>`;
   document.getElementById('hdrNome').textContent = currentPerfil.nome;
-}}
+}
 
 // ═══════════════════════════════════════════════════════
 // NAVEGAÇÃO
 // ═══════════════════════════════════════════════════════
-function goTo(p){{
+function goTo(p){
   document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
   const pg  = document.getElementById('page-'+p);
@@ -730,63 +722,63 @@ function goTo(p){{
   if(p==='aniversariantes') renderAniversariantes();
   if(p==='whatsapp')        renderWAHistorico();
   if(p==='captacao')        renderCaptacao();
-}}
+}
 
 // ═══════════════════════════════════════════════════════
 // STATS
 // ═══════════════════════════════════════════════════════
-async function loadStats(){{
-  const [{{count:cm}}, {{count:cp}}, {{count:cu}}] = await Promise.all([
-    db.from('membros').select('*',{{count:'exact',head:true}}),
-    db.from('protocolos').select('*',{{count:'exact',head:true}}),
-    db.from('protocolos').select('*',{{count:'exact',head:true}}).eq('status','Urgente'),
+async function loadStats(){
+  const [{count:cm}, {count:cp}, {count:cu}] = await Promise.all([
+    db.from('membros').select('*',{count:'exact',head:true}),
+    db.from('protocolos').select('*',{count:'exact',head:true}),
+    db.from('protocolos').select('*',{count:'exact',head:true}).eq('status','Urgente'),
   ]);
   document.getElementById('st-membros').textContent = cm||0;
   document.getElementById('st-protos').textContent  = cp||0;
   document.getElementById('st-urg').textContent     = cu||0;
   // Eventos hoje
   const hoje = new Date().toISOString().split('T')[0];
-  const {{count:ca}} = await db.from('agenda').select('*',{{count:'exact',head:true}})
+  const {count:ca} = await db.from('agenda').select('*',{count:'exact',head:true})
     .gte('inicio',hoje+'T00:00:00').lte('inicio',hoje+'T23:59:59');
   document.getElementById('st-agenda').textContent = ca||0;
   // Urgentes na home
-  const {{data:urg}} = await db.from('protocolos').select('*').eq('status','Urgente').limit(3);
+  const {data:urg} = await db.from('protocolos').select('*').eq('status','Urgente').limit(3);
   const hEl = document.getElementById('home-urgentes');
-  if(!urg||!urg.length){{ hEl.innerHTML='<p style="font-size:12px;color:var(--gray)">Nenhum protocolo urgente 👍</p>'; return; }}
+  if(!urg||!urg.length){ hEl.innerHTML='<p style="font-size:12px;color:var(--gray)">Nenhum protocolo urgente 👍</p>'; return; }
   hEl.innerHTML = urg.map(p=>`<div style="padding:6px 0;border-bottom:1px solid var(--gray-l)">
     <span class="badge br" style="margin-right:6px">Urgente</span>
-    <span style="font-size:12px">${{p.numero}} — ${{p.titulo}}</span>
+    <span style="font-size:12px">${p.numero} — ${p.titulo}</span>
   </div>`).join('');
-}}
+}
 
 // ═══════════════════════════════════════════════════════
 // CONTATOS
 // ═══════════════════════════════════════════════════════
 let todosConts = [];
-async function renderConts(){{
-  const {{data}} = await db.from('membros').select('*').order('nome');
+async function renderConts(){
+  const {data} = await db.from('membros').select('*').order('nome');
   todosConts = data||[];
   _renderContLista(todosConts);
-}}
-function _renderContLista(lista){{
+}
+function _renderContLista(lista){
   const el = document.getElementById('cont-list');
-  if(!lista.length){{ el.innerHTML='<div class="empty"><div class="empty-icon">👥</div><p>Nenhum contato</p></div>'; return; }}
-  const engBadge={{Engajado:'bg',Favorável:'bb',Neutro:'by',Distante:'br'}};
+  if(!lista.length){ el.innerHTML='<div class="empty"><div class="empty-icon">👥</div><p>Nenhum contato</p></div>'; return; }
+  const engBadge={Engajado:'bg',Favorável:'bb',Neutro:'by',Distante:'br'};
   el.innerHTML = lista.map(c=>`
-    <div class="cont-card" onclick="editCont('${{c.id}}')" style="border-left-color:var(--${{engBadge[c.engajamento]=='bg'?'green':engBadge[c.engajamento]=='bb'?'blue':engBadge[c.engajamento]=='by'?'yellow':'red'}})">
+    <div class="cont-card" onclick="editCont('${c.id}')" style="border-left-color:var(--${engBadge[c.engajamento]=='bg'?'green':engBadge[c.engajamento]=='bb'?'blue':engBadge[c.engajamento]=='by'?'yellow':'red'})">
       <div style="flex:1">
-        <div style="font-weight:700;font-size:14px">${{c.nome}}</div>
-        <div style="font-size:11px;color:var(--gray)">${{c.telefone||''}} ${{c.bairro?'· '+c.bairro:''}}</div>
+        <div style="font-weight:700;font-size:14px">${c.nome}</div>
+        <div style="font-size:11px;color:var(--gray)">${c.telefone||''} ${c.bairro?'· '+c.bairro:''}</div>
       </div>
-      <span class="badge ${{engBadge[c.engajamento]||'bgr'}}">${{c.engajamento}}</span>
+      <span class="badge ${engBadge[c.engajamento]||'bgr'}">${c.engajamento}</span>
     </div>`).join('');
-}}
-function filtC(el){{
+}
+function filtC(el){
   const q = el.value.toLowerCase();
   _renderContLista(todosConts.filter(c=>(c.nome+c.telefone+c.bairro+c.cidade).toLowerCase().includes(q)));
-}}
-function editCont(id){{
-  const c = todosConts.find(x=>x.id===id)||{{}};
+}
+function editCont(id){
+  const c = todosConts.find(x=>x.id===id)||{};
   document.getElementById('cont-id').value     = c.id||'';
   document.getElementById('c-nome').value      = c.nome||'';
   document.getElementById('c-tel').value       = c.telefone||'';
@@ -802,10 +794,10 @@ function editCont(id){{
   document.getElementById('btn-del-cont').style.display = (isEdit&&currentPerfil?.role==='admin')?'block':'none';
   document.getElementById('cont-wa-area').style.display = (isEdit&&c.telefone)?'block':'none';
   openM('m-cont');
-}}
-async function salvarCont(){{
+}
+async function salvarCont(){
   const id   = document.getElementById('cont-id').value;
-  const dados = {{
+  const dados = {
     nome:       document.getElementById('c-nome').value.trim(),
     telefone:   document.getElementById('c-tel').value.trim(),
     email:      document.getElementById('c-email').value.trim()||null,
@@ -816,16 +808,16 @@ async function salvarCont(){{
     vota_em:    document.getElementById('c-vota').value.trim(),
     observacao: document.getElementById('c-obs').value.trim(),
     criado_por: currentUser.id,
-  }};
-  if(!dados.nome){{ toast('❌ Nome obrigatório'); return; }}
+  };
+  if(!dados.nome){ toast('❌ Nome obrigatório'); return; }
   showLoad();
-  if(id){{ await db.from('membros').update(dados).eq('id',id); }}
-  else  {{ await db.from('membros').insert(dados); }}
+  if(id){ await db.from('membros').update(dados).eq('id',id); }
+  else  { await db.from('membros').insert(dados); }
   hideLoad(); closeM('m-cont');
   await renderConts(); await loadStats();
   toast('✅ Contato salvo!');
-}}
-async function delCont(){{
+}
+async function delCont(){
   const id = document.getElementById('cont-id').value;
   if(!id||!confirm('Excluir contato?')) return;
   showLoad();
@@ -833,77 +825,77 @@ async function delCont(){{
   hideLoad(); closeM('m-cont');
   await renderConts(); await loadStats();
   toast('🗑️ Contato excluído');
-}}
-function exportCSV(){{
-  if(!todosConts.length){{ toast('Nenhum contato para exportar'); return; }}
+}
+function exportCSV(){
+  if(!todosConts.length){ toast('Nenhum contato para exportar'); return; }
   const cols=['nome','telefone','email','nascimento','bairro','cidade','engajamento','vota_em','observacao','criado_em'];
-  const rows=[cols.join(','),...todosConts.map(c=>cols.map(k=>`"${{(c[k]||'').toString().replace(/"/g,'""')}}"`).join(','))];
+  const rows=[cols.join(','),...todosConts.map(c=>cols.map(k=>`"${(c[k]||'').toString().replace(/"/g,'""')}"`).join(','))];
   const a=document.createElement('a');
   a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(rows.join('\\n'));
   a.download='contatos_gabinete.csv'; a.click();
-}}
+}
 
 // ═══════════════════════════════════════════════════════
 // CAPTAÇÃO
 // ═══════════════════════════════════════════════════════
-async function renderCaptacao(){{
-  const {{data}} = await db.from('membros').select('*').eq('origem','captacao').order('criado_em',{{ascending:false}});
+async function renderCaptacao(){
+  const {data} = await db.from('membros').select('*').eq('origem','captacao').order('criado_em',{ascending:false});
   const el = document.getElementById('captacao-list');
-  document.getElementById('captacao-count').textContent = data?.length? `(${{data.length}})` : '';
-  if(!data||!data.length){{ el.innerHTML='<div class="empty" style="padding:14px"><p>Nenhum cadastro ainda</p></div>'; return; }}
+  document.getElementById('captacao-count').textContent = data?.length? `(${data.length})` : '';
+  if(!data||!data.length){ el.innerHTML='<div class="empty" style="padding:14px"><p>Nenhum cadastro ainda</p></div>'; return; }
   el.innerHTML = data.map(c=>`
-    <div class="cont-card" onclick="editCont('${{c.id}}')">
+    <div class="cont-card" onclick="editCont('${c.id}')">
       <div style="flex:1">
-        <div style="font-weight:700">${{c.nome}}</div>
-        <div style="font-size:11px;color:var(--gray)">${{c.telefone||''}} · ${{new Date(c.criado_em).toLocaleDateString('pt-BR')}}</div>
+        <div style="font-weight:700">${c.nome}</div>
+        <div style="font-size:11px;color:var(--gray)">${c.telefone||''} · ${new Date(c.criado_em).toLocaleDateString('pt-BR')}</div>
       </div>
     </div>`).join('');
-}}
-function copiarLink(){{
+}
+function copiarLink(){
   const link = window.location.href.split('?')[0]+'?cadastro=1';
   navigator.clipboard.writeText(link).then(()=>toast('📋 Link copiado!'));
-}}
-function compartilharWA(){{
+}
+function compartilharWA(){
   const link = window.location.href.split('?')[0]+'?cadastro=1';
-  window.open(`https://wa.me/?text=${{encodeURIComponent('Cadastre-se no gabinete da Vereadora Luana Marques: '+link)}}`,'_blank');
-}}
+  window.open(`https://wa.me/?text=${encodeURIComponent('Cadastre-se no gabinete da Vereadora Luana Marques: '+link)}`,'_blank');
+}
 
 // ═══════════════════════════════════════════════════════
 // PROTOCOLOS
 // ═══════════════════════════════════════════════════════
 let todosProtos = [];
-async function renderProtos(){{
-  const {{data}} = await db.from('protocolos').select('*,membros(nome)').order('criado_em',{{ascending:false}});
+async function renderProtos(){
+  const {data} = await db.from('protocolos').select('*,membros(nome)').order('criado_em',{ascending:false});
   todosProtos = data||[];
   _renderProtoLista(todosProtos);
   preencheSelectConts();
-}}
-const statusColors={{Aberto:'var(--blue)',Em_andamento:'var(--yellow)',Urgente:'var(--red)',Resolvido:'var(--green)',Arquivado:'var(--gray)'}};
-function _renderProtoLista(lista){{
+}
+const statusColors={Aberto:'var(--blue)',Em_andamento:'var(--yellow)',Urgente:'var(--red)',Resolvido:'var(--green)',Arquivado:'var(--gray)'};
+function _renderProtoLista(lista){
   const el=document.getElementById('proto-list');
   const em=document.getElementById('pr-empty');
-  if(!lista.length){{ el.innerHTML=''; em.style.display='block'; return; }}
+  if(!lista.length){ el.innerHTML=''; em.style.display='block'; return; }
   em.style.display='none';
   el.innerHTML=lista.map(p=>`
-    <div class="proto-card" onclick="editProto('${{p.id}}')"
-      style="border-left-color:${{p.status==='Urgente'?'var(--red)':p.status==='Resolvido'?'var(--green)':p.status==='Em andamento'?'var(--yellow)':'var(--blue)' }}">
+    <div class="proto-card" onclick="editProto('${p.id}')"
+      style="border-left-color:${p.status==='Urgente'?'var(--red)':p.status==='Resolvido'?'var(--green)':p.status==='Em andamento'?'var(--yellow)':'var(--blue)' }">
       <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
-        <span style="font-size:10px;font-weight:800;color:var(--gray)">${{p.numero}}</span>
-        <span class="badge ${{p.status==='Urgente'?'br':p.status==='Resolvido'?'bg':p.status==='Em andamento'?'by':'bb'}}">${{p.status}}</span>
-        <span class="badge bgr">${{p.assunto}}</span>
+        <span style="font-size:10px;font-weight:800;color:var(--gray)">${p.numero}</span>
+        <span class="badge ${p.status==='Urgente'?'br':p.status==='Resolvido'?'bg':p.status==='Em andamento'?'by':'bb'}">${p.status}</span>
+        <span class="badge bgr">${p.assunto}</span>
       </div>
-      <div style="font-weight:700;font-size:13px">${{p.titulo}}</div>
-      ${{p.membros?`<div style="font-size:11px;color:var(--gray)">👤 ${{p.membros.nome}}</div>`:''}}</div>`).join('');
-}}
-function filtPr(){{
+      <div style="font-weight:700;font-size:13px">${p.titulo}</div>
+      ${p.membros?`<div style="font-size:11px;color:var(--gray)">👤 ${p.membros.nome}</div>`:''}</div>`).join('');
+}
+function filtPr(){
   const assunto = document.getElementById('filtro-assunto').value;
   _renderProtoLista(assunto? todosProtos.filter(p=>p.assunto===assunto) : todosProtos);
-}}
-function filtPrTexto(el){{
+}
+function filtPrTexto(el){
   const q=el.value.toLowerCase();
   _renderProtoLista(todosProtos.filter(p=>(p.titulo+p.numero+p.assunto+p.status).toLowerCase().includes(q)));
-}}
-async function editProto(id){{
+}
+async function editProto(id){
   const p = id?todosProtos.find(x=>x.id===id):null;
   document.getElementById('proto-id').value       = p?.id||'';
   document.getElementById('proto-titulo').value   = p?.titulo||'';
@@ -916,51 +908,51 @@ async function editProto(id){{
   document.getElementById('m-proto-title').textContent = p?'✏️ Editar Protocolo':'📋 Novo Protocolo';
   document.getElementById('btn-del-proto').style.display = (p&&currentPerfil?.role==='admin')?'block':'none';
   const chatArea = document.getElementById('proto-chat-area');
-  if(p?.id){{
+  if(p?.id){
     chatArea.style.display='block';
     await loadMsgsProto(p.id);
-  }} else {{ chatArea.style.display='none'; }}
+  } else { chatArea.style.display='none'; }
   openM('m-proto');
-}}
-async function loadMsgsProto(pid){{
-  const {{data}} = await db.from('mensagens').select('*,perfis(nome)').eq('protocolo_id',pid).order('criado_em');
+}
+async function loadMsgsProto(pid){
+  const {data} = await db.from('mensagens').select('*,perfis(nome)').eq('protocolo_id',pid).order('criado_em');
   const el = document.getElementById('proto-chat-msgs');
-  if(!data||!data.length){{ el.innerHTML='<p style="font-size:11px;color:var(--gray)">Nenhuma mensagem ainda</p>'; return; }}
+  if(!data||!data.length){ el.innerHTML='<p style="font-size:11px;color:var(--gray)">Nenhuma mensagem ainda</p>'; return; }
   el.innerHTML = data.map(m=>`
-    <div class="msg-bubble msg-${{m.tipo==='whatsapp_enviado'?'wa':m.tipo==='sistema'?'sistema':'interno'}}">
+    <div class="msg-bubble msg-${m.tipo==='whatsapp_enviado'?'wa':m.tipo==='sistema'?'sistema':'interno'}">
       <div style="font-size:10px;font-weight:700;color:var(--gray-d);margin-bottom:2px">
-        ${{m.perfis?.nome||'Sistema'}} · ${{new Date(m.criado_em).toLocaleTimeString('pt-BR',{{hour:'2-digit',minute:'2-digit'}})}}
+        ${m.perfis?.nome||'Sistema'} · ${new Date(m.criado_em).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}
       </div>
-      ${{m.texto}}
+      ${m.texto}
     </div>`).join('');
   el.scrollTop=el.scrollHeight;
-}}
-async function enviarMensagemProto(){{
+}
+async function enviarMensagemProto(){
   const pid=document.getElementById('proto-id').value;
   const txt=document.getElementById('proto-chat-input').value.trim();
   if(!pid||!txt) return;
-  await db.from('mensagens').insert({{protocolo_id:pid,autor_id:currentUser.id,texto:txt,tipo:'interno'}});
+  await db.from('mensagens').insert({protocolo_id:pid,autor_id:currentUser.id,texto:txt,tipo:'interno'});
   document.getElementById('proto-chat-input').value='';
   await loadMsgsProto(pid);
-}}
-async function enviarMensagemProtoWA(){{
+}
+async function enviarMensagemProtoWA(){
   const pid=document.getElementById('proto-id').value;
   const txt=document.getElementById('proto-chat-input').value.trim();
-  if(!pid||!txt){{ toast('Digite uma mensagem'); return; }}
+  if(!pid||!txt){ toast('Digite uma mensagem'); return; }
   const proto=todosProtos.find(x=>x.id===pid);
-  if(!proto?.membros?.nome){{ toast('Associe um contato ao protocolo'); return; }}
+  if(!proto?.membros?.nome){ toast('Associe um contato ao protocolo'); return; }
   const membro=todosConts.find(x=>x.id===proto.membro_id);
-  if(!membro?.telefone){{ toast('Contato sem telefone cadastrado'); return; }}
-  const ok = await _enviarWA(membro.telefone, `*Protocolo ${{proto.numero}}*\\n${{txt}}`);
-  if(ok){{
-    await db.from('mensagens').insert({{protocolo_id:pid,autor_id:currentUser.id,texto:txt,tipo:'whatsapp_enviado'}});
+  if(!membro?.telefone){ toast('Contato sem telefone cadastrado'); return; }
+  const ok = await _enviarWA(membro.telefone, `*Protocolo ${proto.numero}*\\n${txt}`);
+  if(ok){
+    await db.from('mensagens').insert({protocolo_id:pid,autor_id:currentUser.id,texto:txt,tipo:'whatsapp_enviado'});
     document.getElementById('proto-chat-input').value='';
     await loadMsgsProto(pid);
-  }}
-}}
-async function salvarProto(){{
+  }
+}
+async function salvarProto(){
   const id=document.getElementById('proto-id').value;
-  const dados={{
+  const dados={
     titulo:      document.getElementById('proto-titulo').value.trim(),
     assunto:     document.getElementById('proto-assunto').value,
     status:      document.getElementById('proto-status').value,
@@ -969,16 +961,16 @@ async function salvarProto(){{
     membro_id:   document.getElementById('proto-membro').value||null,
     descricao:   document.getElementById('proto-desc').value.trim(),
     criado_por:  currentUser.id,
-  }};
-  if(!dados.titulo){{ toast('❌ Título obrigatório'); return; }}
+  };
+  if(!dados.titulo){ toast('❌ Título obrigatório'); return; }
   showLoad();
-  if(id){{ await db.from('protocolos').update(dados).eq('id',id); }}
-  else  {{ await db.from('protocolos').insert(dados); }}
+  if(id){ await db.from('protocolos').update(dados).eq('id',id); }
+  else  { await db.from('protocolos').insert(dados); }
   hideLoad(); closeM('m-proto');
   await renderProtos(); await loadStats();
   toast('✅ Protocolo salvo!');
-}}
-async function delProto(){{
+}
+async function delProto(){
   const id=document.getElementById('proto-id').value;
   if(!id||!confirm('Excluir protocolo?')) return;
   showLoad();
@@ -987,53 +979,53 @@ async function delProto(){{
   hideLoad(); closeM('m-proto');
   await renderProtos(); await loadStats();
   toast('🗑️ Protocolo excluído');
-}}
-function preencheSelectConts(){{
+}
+function preencheSelectConts(){
   const sel=document.getElementById('proto-membro');
   const val=sel.value;
   sel.innerHTML='<option value="">-- nenhum --</option>';
-  todosConts.forEach(c=>{{
+  todosConts.forEach(c=>{
     const o=document.createElement('option');
     o.value=c.id; o.textContent=c.nome+(c.telefone?' ('+c.telefone+')':'');
     sel.appendChild(o);
-  }});
+  });
   if(val) sel.value=val;
-}}
+}
 
 // ═══════════════════════════════════════════════════════
 // AGENDA
 // ═══════════════════════════════════════════════════════
 let todosAgs=[];
-async function renderAg(){{
-  const {{data}}=await db.from('agenda').select('*').order('inicio');
+async function renderAg(){
+  const {data}=await db.from('agenda').select('*').order('inicio');
   todosAgs=data||[];
   _renderAgLista(todosAgs);
-}}
-function _renderAgLista(lista){{
+}
+function _renderAgLista(lista){
   const el=document.getElementById('ag-list');
-  if(!lista.length){{ el.innerHTML='<div class="empty"><div class="empty-icon">📅</div><p>Nenhum evento</p></div>'; return; }}
-  const tipoIcon={{Reunião:'🤝',Evento:'🎉',Audiência:'⚖️',Sessão:'🏛️',Visita:'🚗',Outro:'📌'}};
-  el.innerHTML=lista.map(a=>{{
+  if(!lista.length){ el.innerHTML='<div class="empty"><div class="empty-icon">📅</div><p>Nenhum evento</p></div>'; return; }
+  const tipoIcon={Reunião:'🤝',Evento:'🎉',Audiência:'⚖️',Sessão:'🏛️',Visita:'🚗',Outro:'📌'};
+  el.innerHTML=lista.map(a=>{
     const d=new Date(a.inicio);
-    return `<div class="proto-card" onclick="editAgenda('${{a.id}}')">
+    return `<div class="proto-card" onclick="editAgenda('${a.id}')">
       <div style="display:flex;gap:8px;align-items:center">
         <div style="text-align:center;min-width:40px;background:var(--pink-ll);border-radius:8px;padding:4px">
-          <div style="font-size:16px;font-weight:900;color:var(--pink)">${{d.getDate()}}</div>
-          <div style="font-size:9px;color:var(--gray)">${{d.toLocaleString('pt-BR',{{month:'short'}}).toUpperCase()}}</div>
+          <div style="font-size:16px;font-weight:900;color:var(--pink)">${d.getDate()}</div>
+          <div style="font-size:9px;color:var(--gray)">${d.toLocaleString('pt-BR',{month:'short'}).toUpperCase()}</div>
         </div>
         <div>
-          <div style="font-weight:700">${{tipoIcon[a.tipo]||'📌'}} ${{a.titulo}}</div>
-          <div style="font-size:11px;color:var(--gray)">${{d.toLocaleTimeString('pt-BR',{{hour:'2-digit',minute:'2-digit'}})}}${{a.local?' · '+a.local:''}}</div>
+          <div style="font-weight:700">${tipoIcon[a.tipo]||'📌'} ${a.titulo}</div>
+          <div style="font-size:11px;color:var(--gray)">${d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}${a.local?' · '+a.local:''}</div>
         </div>
       </div>
     </div>`;
-  }}).join('');
-}}
-function filtAg(el){{
+  }).join('');
+}
+function filtAg(el){
   const q=el.value.toLowerCase();
   _renderAgLista(todosAgs.filter(a=>(a.titulo+(a.local||'')+(a.tipo||'')).toLowerCase().includes(q)));
-}}
-function editAgenda(id){{
+}
+function editAgenda(id){
   const a=id?todosAgs.find(x=>x.id===id):null;
   document.getElementById('ag-id').value    = a?.id||'';
   document.getElementById('ag-titulo').value= a?.titulo||'';
@@ -1045,10 +1037,10 @@ function editAgenda(id){{
   document.getElementById('m-ag-title').textContent = a?'✏️ Editar Evento':'📅 Novo Evento';
   document.getElementById('btn-del-ag').style.display = (a&&currentPerfil?.role==='admin')?'block':'none';
   openM('m-ag');
-}}
-async function salvarAg(){{
+}
+async function salvarAg(){
   const id=document.getElementById('ag-id').value;
-  const dados={{
+  const dados={
     titulo:    document.getElementById('ag-titulo').value.trim(),
     tipo:      document.getElementById('ag-tipo').value,
     inicio:    document.getElementById('ag-inicio').value,
@@ -1056,16 +1048,16 @@ async function salvarAg(){{
     local:     document.getElementById('ag-local').value.trim(),
     descricao: document.getElementById('ag-desc').value.trim(),
     criado_por:currentUser.id,
-  }};
-  if(!dados.titulo||!dados.inicio){{ toast('❌ Título e início obrigatórios'); return; }}
+  };
+  if(!dados.titulo||!dados.inicio){ toast('❌ Título e início obrigatórios'); return; }
   showLoad();
-  if(id){{ await db.from('agenda').update(dados).eq('id',id); }}
-  else  {{ await db.from('agenda').insert(dados); }}
+  if(id){ await db.from('agenda').update(dados).eq('id',id); }
+  else  { await db.from('agenda').insert(dados); }
   hideLoad(); closeM('m-ag');
   await renderAg(); await loadStats();
   toast('✅ Evento salvo!');
-}}
-async function delAg(){{
+}
+async function delAg(){
   const id=document.getElementById('ag-id').value;
   if(!id||!confirm('Excluir evento?')) return;
   showLoad();
@@ -1073,229 +1065,229 @@ async function delAg(){{
   hideLoad(); closeM('m-ag');
   await renderAg(); await loadStats();
   toast('🗑️ Evento excluído');
-}}
+}
 
 // ═══════════════════════════════════════════════════════
 // LEMBRETES
 // ═══════════════════════════════════════════════════════
-async function renderLem(){{
-  const {{data}}=await db.from('lembretes').select('*').eq('dono_id',currentUser.id).order('criado_em',{{ascending:false}});
+async function renderLem(){
+  const {data}=await db.from('lembretes').select('*').eq('dono_id',currentUser.id).order('criado_em',{ascending:false});
   const el=document.getElementById('lem-list');
   const pending=(data||[]).filter(l=>!l.concluido).length;
   const badge=document.getElementById('nav-lem-b');
   badge.style.display=pending?'block':'none';
   badge.textContent=pending;
-  if(!data||!data.length){{ el.innerHTML='<div class="empty"><div class="empty-icon">📌</div><p>Nenhum lembrete</p></div>'; return; }}
+  if(!data||!data.length){ el.innerHTML='<div class="empty"><div class="empty-icon">📌</div><p>Nenhum lembrete</p></div>'; return; }
   el.innerHTML=data.map(l=>`
-    <div class="card" style="opacity:${{l.concluido?.6:1}}">
+    <div class="card" style="opacity:${l.concluido?.6:1}">
       <div style="display:flex;align-items:center;gap:10px">
-        <input type="checkbox" ${{l.concluido?'checked':''}} onchange="toggleLem('${{l.id}}',${{!l.concluido}})" style="width:18px;height:18px;cursor:pointer"/>
-        <span style="flex:1;font-size:13px;text-decoration:${{l.concluido?'line-through':'none'}}">${{l.texto}}</span>
-        <button class="btn btn-red btn-sm" style="padding:4px 8px" onclick="delLem('${{l.id}}')">🗑️</button>
+        <input type="checkbox" ${l.concluido?'checked':''} onchange="toggleLem('${l.id}',${!l.concluido})" style="width:18px;height:18px;cursor:pointer"/>
+        <span style="flex:1;font-size:13px;text-decoration:${l.concluido?'line-through':'none'}">${l.texto}</span>
+        <button class="btn btn-red btn-sm" style="padding:4px 8px" onclick="delLem('${l.id}')">🗑️</button>
       </div>
     </div>`).join('');
-}}
-async function salvarLem(){{
+}
+async function salvarLem(){
   const txt=document.getElementById('lem-texto').value.trim();
-  if(!txt){{ toast('❌ Escreva algo'); return; }}
-  await db.from('lembretes').insert({{texto:txt,dono_id:currentUser.id}});
+  if(!txt){ toast('❌ Escreva algo'); return; }
+  await db.from('lembretes').insert({texto:txt,dono_id:currentUser.id});
   document.getElementById('lem-texto').value='';
   closeM('m-lem'); await renderLem();
   toast('✅ Lembrete salvo!');
-}}
-async function toggleLem(id,val){{
-  await db.from('lembretes').update({{concluido:val}}).eq('id',id);
+}
+async function toggleLem(id,val){
+  await db.from('lembretes').update({concluido:val}).eq('id',id);
   await renderLem();
-}}
-async function delLem(id){{
+}
+async function delLem(id){
   await db.from('lembretes').delete().eq('id',id);
   await renderLem();
-}}
+}
 
 // ═══════════════════════════════════════════════════════
 // ANIVERSARIANTES
 // ═══════════════════════════════════════════════════════
-async function renderAniversariantes(){{
-  const {{data}}=await db.from('membros').select('nome,nascimento,telefone').not('nascimento','is',null);
+async function renderAniversariantes(){
+  const {data}=await db.from('membros').select('nome,nascimento,telefone').not('nascimento','is',null);
   const hoje=new Date();
   const dd=String(hoje.getDate()).padStart(2,'0');
   const mm=String(hoje.getMonth()+1).padStart(2,'0');
   const hojeMD=mm+'-'+dd;
   const hoje30=new Date(hoje); hoje30.setDate(hoje30.getDate()+30);
   const anivHoje=[], anivProx=[];
-  (data||[]).forEach(c=>{{
+  (data||[]).forEach(c=>{
     if(!c.nascimento) return;
     const parts=c.nascimento.split('-');
     const md=parts[1]+'-'+parts[2];
-    if(md===hojeMD) {{ anivHoje.push(c); return; }}
+    if(md===hojeMD) { anivHoje.push(c); return; }
     const dAniv=new Date(hoje.getFullYear(),parseInt(parts[1])-1,parseInt(parts[2]));
     if(dAniv<hoje) dAniv.setFullYear(hoje.getFullYear()+1);
-    if(dAniv<=hoje30) anivProx.push({{...c,_dAniv:dAniv}});
-  }});
+    if(dAniv<=hoje30) anivProx.push({...c,_dAniv:dAniv});
+  });
   anivProx.sort((a,b)=>a._dAniv-b._dAniv);
   const fmt=c=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--gray-l)">
     <span style="font-size:18px">🎂</span>
-    <div style="flex:1"><div style="font-weight:700;font-size:13px">${{c.nome}}</div>
-    <div style="font-size:11px;color:var(--gray)">${{c.nascimento.split('-').reverse().join('/')}}${{c.telefone?' · '+c.telefone:''}}</div></div>
-    ${{c.telefone?`<a href="https://wa.me/55${{c.telefone.replace(/\\D/g,'')}}" target="_blank" class="btn btn-green btn-sm" style="padding:4px 8px">💬</a>`:''}}
+    <div style="flex:1"><div style="font-weight:700;font-size:13px">${c.nome}</div>
+    <div style="font-size:11px;color:var(--gray)">${c.nascimento.split('-').reverse().join('/')}${c.telefone?' · '+c.telefone:''}</div></div>
+    ${c.telefone?`<a href="https://wa.me/55${c.telefone.replace(/\\D/g,'')}" target="_blank" class="btn btn-green btn-sm" style="padding:4px 8px">💬</a>`:''}
   </div>`;
   document.getElementById('aniv-hoje-list').innerHTML  = anivHoje.length?anivHoje.map(fmt).join(''):'<p style="font-size:12px;color:var(--gray)">Nenhum hoje</p>';
   document.getElementById('aniv-prox-list').innerHTML  = anivProx.length?anivProx.map(fmt).join(''):'<p style="font-size:12px;color:var(--gray)">Nenhum nos próximos 30 dias</p>';
-}}
+}
 
 // ═══════════════════════════════════════════════════════
 // WHATSAPP (Z-API)
 // ═══════════════════════════════════════════════════════
-function salvarConfigWA(){{
-  waConfig={{
+function salvarConfigWA(){
+  waConfig={
     instance: document.getElementById('wa-instance').value.trim(),
     token:    document.getElementById('wa-token').value.trim(),
-  }};
+  };
   localStorage.setItem('wa_config',JSON.stringify(waConfig));
   toast('✅ Configuração WA salva!');
-}}
-async function _enviarWA(telefone, mensagem){{
-  if(!waConfig.instance||!waConfig.token){{
+}
+async function _enviarWA(telefone, mensagem){
+  if(!waConfig.instance||!waConfig.token){
     toast('⚠️ Configure a Z-API primeiro (aba WhatsApp)');
     return false;
-  }}
+  }
   const num = telefone.replace(/\\D/g,'');
   const fone = num.startsWith('55')?num:'55'+num;
-  try{{
+  try{
     const r = await fetch(
-      `https://api.z-api.io/instances/${{waConfig.instance}}/token/${{waConfig.token}}/send-text`,
-      {{method:'POST',headers:{{'Content-Type':'application/json'}},
-        body:JSON.stringify({{phone:fone,message:mensagem}})}}
+      `https://api.z-api.io/instances/${waConfig.instance}/token/${waConfig.token}/send-text`,
+      {method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({phone:fone,message:mensagem})}
     );
     const d = await r.json();
-    if(d.zaapId||d.messageId){{
+    if(d.zaapId||d.messageId){
       // Log
-      await db.from('whatsapp_log').insert({{
+      await db.from('whatsapp_log').insert({
         telefone:fone,mensagem,status:'enviado',enviado_em:new Date().toISOString()
-      }});
+      });
       toast('✅ WhatsApp enviado!');
       await renderWAHistorico();
       return true;
-    }}
+    }
     toast('❌ Erro WA: '+(d.error||JSON.stringify(d)));
     return false;
-  }} catch(e){{ toast('❌ Erro: '+e.message); return false; }}
-}}
-async function enviarWA(){{
+  } catch(e){ toast('❌ Erro: '+e.message); return false; }
+}
+async function enviarWA(){
   const tel = document.getElementById('wa-para').value.trim();
   const msg = document.getElementById('wa-msg').value.trim();
-  if(!tel||!msg){{ toast('Preencha telefone e mensagem'); return; }}
+  if(!tel||!msg){ toast('Preencha telefone e mensagem'); return; }
   const ok=await _enviarWA(tel,msg);
-  if(ok){{ document.getElementById('wa-para').value=''; document.getElementById('wa-msg').value=''; }}
-}}
-async function enviarWAContato(){{
+  if(ok){ document.getElementById('wa-para').value=''; document.getElementById('wa-msg').value=''; }
+}
+async function enviarWAContato(){
   const tel=document.getElementById('c-tel').value.trim();
   const msg=document.getElementById('cont-wa-msg').value.trim();
-  if(!tel||!msg){{ toast('Preencha a mensagem'); return; }}
+  if(!tel||!msg){ toast('Preencha a mensagem'); return; }
   const ok=await _enviarWA(tel,msg);
   if(ok) document.getElementById('cont-wa-msg').value='';
-}}
-async function renderWAHistorico(){{
-  const {{data}}=await db.from('whatsapp_log').select('*').order('criado_em',{{ascending:false}}).limit(30);
+}
+async function renderWAHistorico(){
+  const {data}=await db.from('whatsapp_log').select('*').order('criado_em',{ascending:false}).limit(30);
   const el=document.getElementById('wa-historico');
-  if(!data||!data.length){{ el.innerHTML='<p style="font-size:12px;color:var(--gray)">Nenhum envio ainda</p>'; return; }}
+  if(!data||!data.length){ el.innerHTML='<p style="font-size:12px;color:var(--gray)">Nenhum envio ainda</p>'; return; }
   el.innerHTML=data.map(w=>`
     <div style="padding:8px 0;border-bottom:1px solid var(--gray-l)">
       <div style="display:flex;align-items:center;gap:6px">
-        <span class="badge ${{w.status==='enviado'?'bg':'br'}}">${{w.status}}</span>
-        <span style="font-size:11px;font-weight:700">${{w.telefone}}</span>
-        <span style="font-size:10px;color:var(--gray);margin-left:auto">${{new Date(w.criado_em).toLocaleString('pt-BR')}}</span>
+        <span class="badge ${w.status==='enviado'?'bg':'br'}">${w.status}</span>
+        <span style="font-size:11px;font-weight:700">${w.telefone}</span>
+        <span style="font-size:10px;color:var(--gray);margin-left:auto">${new Date(w.criado_em).toLocaleString('pt-BR')}</span>
       </div>
-      <div style="font-size:12px;color:var(--gray-d);margin-top:3px">${{w.mensagem.substring(0,80)}}${{w.mensagem.length>80?'...':''}}</div>
+      <div style="font-size:12px;color:var(--gray-d);margin-top:3px">${w.mensagem.substring(0,80)}${w.mensagem.length>80?'...':''}</div>
     </div>`).join('');
-}}
+}
 
 // ═══════════════════════════════════════════════════════
 // PERFIL / USUÁRIOS
 // ═══════════════════════════════════════════════════════
-async function salvarPerfil(){{
-  const dados={{
+async function salvarPerfil(){
+  const dados={
     nome:     document.getElementById('perfil-nome-input').value.trim(),
     whatsapp: document.getElementById('perfil-wa-input').value.trim()||null,
-  }};
+  };
   showLoad();
   await db.from('perfis').update(dados).eq('id',currentUser.id);
-  currentPerfil={{...currentPerfil,...dados}};
+  currentPerfil={...currentPerfil,...dados};
   updateHeader();
   hideLoad();
   toast('✅ Perfil salvo!');
-}}
-async function alterarSenha(){{
+}
+async function alterarSenha(){
   const nova=document.getElementById('nova-senha').value;
-  if(nova.length<6){{ toast('❌ Mínimo 6 caracteres'); return; }}
+  if(nova.length<6){ toast('❌ Mínimo 6 caracteres'); return; }
   showLoad();
-  const {{error}}=await db.auth.updateUser({{password:nova}});
+  const {error}=await db.auth.updateUser({password:nova});
   hideLoad();
-  if(error){{ toast('❌ '+error.message); }}
-  else{{ document.getElementById('nova-senha').value=''; toast('✅ Senha alterada!'); }}
-}}
-async function renderUsers(){{
+  if(error){ toast('❌ '+error.message); }
+  else{ document.getElementById('nova-senha').value=''; toast('✅ Senha alterada!'); }
+}
+async function renderUsers(){
   if(currentPerfil?.role!=='admin') return;
-  const {{data}}=await db.from('perfis').select('*').order('nome');
+  const {data}=await db.from('perfis').select('*').order('nome');
   const el=document.getElementById('user-list');
-  if(!data||!data.length){{ el.innerHTML=''; return; }}
-  const roleMap={{admin:'🔑 Admin',colaborador:'✏️ Colab',visitante:'👁️ Visitante'}};
-  const cls={{admin:'role-admin',colaborador:'role-colab',visitante:'role-visit'}};
+  if(!data||!data.length){ el.innerHTML=''; return; }
+  const roleMap={admin:'🔑 Admin',colaborador:'✏️ Colab',visitante:'👁️ Visitante'};
+  const cls={admin:'role-admin',colaborador:'role-colab',visitante:'role-visit'};
   el.innerHTML=data.map(u=>`
     <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--gray-l)">
       <div style="flex:1">
-        <div style="font-weight:700;font-size:13px">${{u.nome}}</div>
-        <div style="font-size:11px;color:var(--gray)">${{u.email}}</div>
+        <div style="font-weight:700;font-size:13px">${u.nome}</div>
+        <div style="font-size:11px;color:var(--gray)">${u.email}</div>
       </div>
-      <span class="badge ${{cls[u.role]||'bgr'}}">${{roleMap[u.role]||u.role}}</span>
-      <select onchange="mudarRole('${{u.id}}',this.value)" style="font-size:11px;border:1.5px solid var(--gray-l);border-radius:8px;padding:4px">
-        <option value="admin" ${{u.role==='admin'?'selected':''}}>Admin</option>
-        <option value="colaborador" ${{u.role==='colaborador'?'selected':''}}>Colab</option>
-        <option value="visitante" ${{u.role==='visitante'?'selected':''}}>Visitante</option>
+      <span class="badge ${cls[u.role]||'bgr'}">${roleMap[u.role]||u.role}</span>
+      <select onchange="mudarRole('${u.id}',this.value)" style="font-size:11px;border:1.5px solid var(--gray-l);border-radius:8px;padding:4px">
+        <option value="admin" ${u.role==='admin'?'selected':''}>Admin</option>
+        <option value="colaborador" ${u.role==='colaborador'?'selected':''}>Colab</option>
+        <option value="visitante" ${u.role==='visitante'?'selected':''}>Visitante</option>
       </select>
     </div>`).join('');
-}}
-async function mudarRole(id,role){{
-  await db.from('perfis').update({{role}}).eq('id',id);
+}
+async function mudarRole(id,role){
+  await db.from('perfis').update({role}).eq('id',id);
   toast('✅ Perfil atualizado');
-}}
-async function criarUsuario(){{
+}
+async function criarUsuario(){
   const email=document.getElementById('u-email').value.trim();
   const nome =document.getElementById('u-nome').value.trim();
   const role =document.getElementById('u-role').value;
   const senha=document.getElementById('u-senha').value;
-  if(!email||!nome||senha.length<6){{ toast('❌ Preencha todos os campos (senha mín. 6 chars)'); return; }}
+  if(!email||!nome||senha.length<6){ toast('❌ Preencha todos os campos (senha mín. 6 chars)'); return; }
   showLoad();
   // Cria via Admin API (precisa de service_role key no backend)
   // Como estamos em frontend, usamos signUp e depois admin atualiza role
-  const {{data,error}}=await db.auth.signUp({{
+  const {data,error}=await db.auth.signUp({
     email,password:senha,
-    options:{{data:{{nome,role}}}}
-  }});
+    options:{data:{nome,role}}
+  });
   hideLoad();
-  if(error){{ toast('❌ '+error.message); return; }}
+  if(error){ toast('❌ '+error.message); return; }
   toast('✅ Usuário criado! Peça para ele confirmar o e-mail.');
   closeM('m-user');
   await renderUsers();
-}}
+}
 
 // ═══════════════════════════════════════════════════════
 // FORMULÁRIO PÚBLICO
 // ═══════════════════════════════════════════════════════
-function showPub(){{
+function showPub(){
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('pubScreen').style.display='block';
-}}
-function voltarLogin(){{
+}
+function voltarLogin(){
   document.getElementById('pubScreen').style.display='none';
   document.getElementById('loginScreen').style.display='flex';
-}}
-async function pubSubmit(){{
+}
+async function pubSubmit(){
   const nome = document.getElementById('pub-nome').value.trim();
   const tel  = document.getElementById('pub-tel').value.trim();
-  if(!nome||!tel){{ showPubMsg('❌ Nome e telefone são obrigatórios','var(--red)'); return; }}
+  if(!nome||!tel){ showPubMsg('❌ Nome e telefone são obrigatórios','var(--red)'); return; }
   showLoad();
-  const {{error}}=await db.from('membros').insert({{
+  const {error}=await db.from('membros').insert({
     nome,
     telefone:   tel,
     email:      document.getElementById('pub-email').value.trim()||null,
@@ -1306,48 +1298,42 @@ async function pubSubmit(){{
     observacao: document.getElementById('pub-obs').value.trim(),
     origem:     'captacao',
     engajamento:'Neutro',
-  }});
+  });
   hideLoad();
-  if(error){{ showPubMsg('❌ Erro: '+error.message,'var(--red)'); return; }}
+  if(error){ showPubMsg('❌ Erro: '+error.message,'var(--red)'); return; }
   showPubMsg('✅ Cadastro realizado! Obrigado pelo apoio!','var(--green)');
   ['pub-nome','pub-tel','pub-email','pub-nasc','pub-bairro','pub-obs'].forEach(id=>document.getElementById(id).value='');
-}}
-function showPubMsg(msg,color){{
+}
+function showPubMsg(msg,color){
   const el=document.getElementById('pub-msg');
   el.style.display='block';
   el.style.color=color;
   el.style.background=color.replace(')',',0.08)').replace('var','rgba').replace('--red','198,40,40').replace('--green','27,94,32');
   el.style.padding='10px';el.style.borderRadius='10px';el.style.fontWeight='700';el.style.fontSize='13px';
   el.textContent=msg;
-}}
+}
 
 // ═══════════════════════════════════════════════════════
 // INIT — verifica sessão existente
 // ═══════════════════════════════════════════════════════
-async function init(){{
+async function init(){
   // Verifica se veio pelo link de captação
-  if(window.location.search.includes('cadastro=1')){{
+  if(window.location.search.includes('cadastro=1')){
     showPub(); return;
-  }}
+  }
   showLoad();
-  const {{data}}=await db.auth.getSession();
+  const {data}=await db.auth.getSession();
   hideLoad();
-  if(data?.session?.user){{
+  if(data?.session?.user){
     await iniciarSessao(data.session.user);
-  }}
+  }
   // Ouve mudanças de auth
-  db.auth.onAuthStateChange(async(_,session)=>{{
+  db.auth.onAuthStateChange(async(_,session)=>{
     if(session?.user&&!currentUser) await iniciarSessao(session.user);
-    if(!session) {{currentUser=null; document.getElementById('loginScreen').style.display='flex';}}
-  }});
-}}
+    if(!session) {currentUser=null; document.getElementById('loginScreen').style.display='flex';}
+  });
+}
 init();
 </script>
 </body>
-</html>'''
-
-with open('/mnt/user-data/outputs/gabinete-supabase.html','w') as f:
-    f.write(html)
-
-print(f'Arquivo criado: {len(html)} chars')
-EOF
+</html>
