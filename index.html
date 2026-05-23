@@ -1,1339 +1,565 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<title>Gabinete Luana Marques</title>
-<!-- Supabase SDK -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-/* ── TOKENS ── */
-:root{
-  --pink:#E91E8C;--pink-d:#C2185B;--pink-dd:#880E4F;
-  --pink-l:rgba(233,30,140,.12);--pink-ll:rgba(233,30,140,.07);
-  --blue:#1565C0;--blue-p:rgba(21,101,192,.1);
-  --green:#1B5E20;--green-p:rgba(27,94,32,.1);
-  --red:#C62828;--red-p:rgba(198,40,40,.1);
-  --yellow:#F57F17;--yellow-p:rgba(245,127,23,.1);
-  --purple:#4A148C;--purple-p:rgba(74,20,140,.1);
-  --gray:#78909C;--gray-l:#ECEFF1;--gray-d:#546E7A;
-  --bg:#F8F9FA;--white:#FFFFFF;
-  --nav-w:66px;--rad:14px;
-  --shadow:0 4px 24px rgba(0,0,0,.08);
-}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      background:var(--bg);color:#1A1C2E;overflow:hidden;height:100vh;display:flex}
-/* ── SIDENAV ── */
-.sidenav{width:var(--nav-w);background:var(--white);display:flex;flex-direction:column;
-  align-items:center;border-right:1px solid var(--gray-l);
-  box-shadow:2px 0 16px rgba(0,0,0,.06);position:fixed;left:0;top:0;bottom:0;
-  z-index:300;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
-.nav-logo-area{width:100%;padding:calc(env(safe-area-inset-top,10px)+8px) 0 8px;
-  display:flex;flex-direction:column;align-items:center;gap:4px;
-  background:linear-gradient(160deg,var(--pink) 0%,var(--pink-d) 100%);flex-shrink:0}
-.nav-item{width:100%;display:flex;flex-direction:column;align-items:center;
-  padding:10px 4px;cursor:pointer;border:none;background:none;font-family:inherit;
-  gap:3px;border-right:3px solid transparent;transition:all .18s;
-  color:var(--gray);position:relative}
-.nav-item.active{background:var(--pink-ll);border-right-color:var(--pink-d);color:var(--pink-d)}
-.nav-icon{font-size:18px;line-height:1}
-.nav-label{font-size:8px;font-weight:700;letter-spacing:.03em;text-align:center;line-height:1.2}
-.nav-badge{position:absolute;top:6px;right:5px;background:var(--red);color:#fff;
-  border-radius:8px;padding:1px 5px;font-size:9px;font-weight:800;line-height:1.2}
-.content{flex:1;margin-left:var(--nav-w);overflow-y:auto;height:100vh;background:var(--bg)}
-/* ── PAGES ── */
-.page{display:none;padding:16px;min-height:100%}
-.page.active{display:block}
-/* ── HEADER ── */
-.page-header{background:var(--white);border-radius:var(--rad);padding:14px 16px;
-  margin-bottom:14px;display:flex;align-items:center;gap:12px;
-  box-shadow:var(--shadow);}
-.page-header-logo{flex:1}
-.hdr-info{display:flex;flex-direction:column;gap:3px}
-/* ── CARDS ── */
-.card{background:var(--white);border-radius:var(--rad);padding:14px;
-  box-shadow:var(--shadow);margin-bottom:12px}
-.card-title{font-size:13px;font-weight:800;color:#1A1C2E;margin-bottom:10px;
-  display:flex;align-items:center;gap:6px}
-/* ── BUTTONS ── */
-.btn{border:none;border-radius:10px;padding:10px 16px;font-size:13px;
-  font-weight:700;cursor:pointer;transition:all .18s;font-family:inherit;
-  display:inline-flex;align-items:center;gap:6px}
-.btn-pink{background:linear-gradient(135deg,var(--pink),var(--pink-d));color:#fff}
-.btn-pink:active{opacity:.85}
-.btn-ghost{background:var(--gray-l);color:var(--gray-d)}
-.btn-green{background:var(--green-p);color:var(--green);border:1px solid rgba(27,94,32,.2)}
-.btn-red{background:var(--red-p);color:var(--red);border:1px solid rgba(198,40,40,.2)}
-.btn-block{width:100%;justify-content:center}
-.btn-sm{padding:7px 12px;font-size:12px}
-/* ── INPUTS ── */
-.field{margin-bottom:12px}
-.field label{font-size:11px;font-weight:700;color:var(--gray-d);
-  text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:5px}
-.field input,.field select,.field textarea{width:100%;border:1.5px solid var(--gray-l);
-  border-radius:10px;padding:10px 12px;font-size:14px;font-family:inherit;
-  background:var(--white);color:#1A1C2E;outline:none;transition:border .15s}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--pink)}
-.field textarea{resize:vertical;min-height:70px}
-/* ── BADGES ── */
-.badge{display:inline-block;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:800}
-.bg{background:var(--green-p);color:var(--green)}
-.bb{background:var(--blue-p);color:var(--blue)}
-.by{background:var(--yellow-p);color:var(--yellow)}
-.br{background:var(--red-p);color:var(--red)}
-.bgr{background:var(--gray-l);color:var(--gray)}
-.role-admin{background:linear-gradient(135deg,var(--pink-d),var(--pink-dd));
-  color:#fff;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:800}
-.role-colab{background:var(--blue-p);color:var(--blue);padding:3px 10px;
-  border-radius:20px;font-size:10px;font-weight:800}
-.role-visit{background:var(--gray-l);color:var(--gray);padding:3px 10px;
-  border-radius:20px;font-size:10px;font-weight:800}
-/* ── LOGIN ── */
-.login-screen{position:fixed;inset:0;
-  background:linear-gradient(160deg,var(--pink) 0%,var(--pink-d) 50%,var(--pink-dd) 100%);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  z-index:1000;padding:24px}
-.login-card{background:rgba(255,255,255,.96);border-radius:24px;padding:26px 20px;
-  width:100%;max-width:340px;box-shadow:0 20px 60px rgba(0,0,0,.22)}
-.login-error{background:var(--red-p);color:var(--red);border-radius:10px;
-  padding:10px 13px;font-size:13px;font-weight:600;margin-bottom:12px;
-  display:none;text-align:center}
-/* ── MODAL ── */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);
-  z-index:500;display:none;align-items:flex-end;justify-content:center}
-.modal-overlay.open{display:flex}
-.modal{background:var(--white);border-radius:20px 20px 0 0;
-  padding:20px 16px calc(env(safe-area-inset-bottom,0px)+20px);
-  width:100%;max-width:480px;max-height:92vh;overflow-y:auto}
-.modal-title{font-size:16px;font-weight:800;margin-bottom:16px;
-  display:flex;align-items:center;gap:8px}
-/* ── TOAST ── */
-.toast{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px)+16px);
-  left:calc(var(--nav-w)+10px);right:10px;background:#1A1C2E;color:#fff;
-  padding:11px 14px;border-radius:13px;font-size:13px;font-weight:700;
-  opacity:0;transition:all .25s;z-index:999;text-align:center;pointer-events:none}
-.toast.show{opacity:1}
-/* ── MISC ── */
-.empty{text-align:center;padding:32px 16px;color:var(--gray)}
-.empty-icon{font-size:36px;margin-bottom:8px}
-.cont-card{background:var(--white);border-radius:12px;padding:12px 14px;
-  margin-bottom:8px;box-shadow:0 2px 8px rgba(0,0,0,.05);
-  display:flex;align-items:center;gap:10px;cursor:pointer;
-  border-left:4px solid transparent}
-.home-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
-.home-tile{background:var(--white);border-radius:14px;padding:14px 8px;
-  text-align:center;cursor:pointer;box-shadow:var(--shadow);
-  transition:transform .15s}
-.home-tile:active{transform:scale(.96)}
-.tile-icon{font-size:24px;margin-bottom:6px}
-.tile-label{font-size:10px;font-weight:800;color:var(--gray-d)}
-.stats-row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
-.stat-box{background:var(--white);border-radius:12px;padding:12px;
-  box-shadow:var(--shadow);text-align:center}
-.stat-num{font-size:28px;font-weight:900;color:var(--pink)}
-.stat-lbl{font-size:10px;color:var(--gray);font-weight:600}
-.proto-card{background:var(--white);border-radius:12px;padding:12px 14px;
-  margin-bottom:8px;box-shadow:0 2px 8px rgba(0,0,0,.05);cursor:pointer;
-  border-left:4px solid var(--gray-l)}
-.msg-bubble{padding:10px 14px;border-radius:14px;margin-bottom:8px;
-  max-width:90%;font-size:13px;line-height:1.5}
-.msg-interno{background:var(--gray-l);align-self:flex-start}
-.msg-wa{background:var(--green-p);border:1px solid rgba(27,94,32,.2);align-self:flex-end}
-.msg-sistema{background:var(--yellow-p);text-align:center;font-size:11px;
-  color:var(--yellow);align-self:center;max-width:100%}
-.chat-area{display:flex;flex-direction:column;gap:4px;padding:8px 0}
-.pub-screen{position:fixed;inset:0;background:var(--bg);z-index:900;
-  overflow-y:auto;display:none}
-/* ── LOADING ── */
-.loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,.8);
-  display:none;align-items:center;justify-content:center;z-index:2000;
-  font-size:28px;flex-direction:column;gap:12px}
-.loading-overlay.show{display:flex}
-.spinner{width:40px;height:40px;border:4px solid var(--gray-l);
-  border-top-color:var(--pink);border-radius:50%;
-  animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-</style>
-</head>
-<body>
+bash
 
-<!-- LOADING -->
-<div class="loading-overlay" id="loadingOverlay">
-  <div class="spinner"></div>
-  <span style="font-size:13px;color:var(--gray);font-weight:700">Carregando...</span>
-</div>
+python3 << 'PYEOF'
+with open('/mnt/user-data/uploads/gabinete-luana__12_.html', 'r') as f:
+    content = f.read()
 
-<!-- TOAST -->
-<div class="toast" id="toastEl"></div>
+# 1. Adicionar nav item WhatsApp antes do Perfil
+content = content.replace(
+    '  <button class="nav-item" id="nav-perfil" onclick="goTo(\'perfil\')" style="margin-top:auto">',
+    '  <button class="nav-item" id="nav-whatsapp" onclick="goTo(\'whatsapp\')"><span class="nav-icon">💬</span><span class="nav-label">WhatsApp</span></button>\n  <button class="nav-item" id="nav-perfil" onclick="goTo(\'perfil\')" style="margin-top:auto">'
+)
 
-<!-- ════════════════ LOGIN ════════════════ -->
-<div class="login-screen" id="loginScreen">
-  <div class="login-card">
-    <div style="text-align:center;margin-bottom:18px">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='80' viewBox='0 0 260 80'%3E%3Crect width='260' height='80' fill='%23E91E8C' rx='12'/%3E%3Ctext x='130' y='48' font-family='Arial,sans-serif' font-size='22' font-weight='900' fill='white' text-anchor='middle'%3ELuana Marques%3C/text%3E%3C/svg%3E" style="width:100%;max-width:260px;height:auto;display:block;margin:0 auto" alt="Luana Marques"/>
-      <p style="font-size:10px;color:var(--gray);letter-spacing:.15em;text-transform:uppercase;margin-top:6px">Vereadora · Novo Gama · GO</p>
+# 2. Adicionar página WhatsApp antes do fechamento </div><!-- /content -->
+wa_page = '''
+<!-- WHATSAPP Z-API -->
+<div class="page" id="page-whatsapp">
+
+  <!-- Configuração Z-API -->
+  <div class="card card-green" id="wa-config-card">
+    <div class="sec"><div class="sec-title" style="color:var(--green)">⚙️ Configuração Z-API</div>
+      <span id="wa-status-badge" class="badge bgr">Desconectado</span>
     </div>
-    <div class="login-error" id="login-error">❌ E-mail ou senha incorretos</div>
-    <div class="field"><label>E-mail</label>
-      <input type="email" id="login-email" placeholder="seu@email.com" autocomplete="email"
-             onkeydown="if(event.key==='Enter')doLogin()"/>
+    <div class="field-row">
+      <div class="field"><label>Instance ID</label><input type="text" id="wa-instance" placeholder="Ex: 3DXXXXXXXX"/></div>
+      <div class="field"><label>Token</label><input type="text" id="wa-token" placeholder="Seu token Z-API"/></div>
     </div>
-    <div class="field"><label>Senha</label>
-      <input type="password" id="login-pass" placeholder="••••••" autocomplete="current-password"
-             onkeydown="if(event.key==='Enter')doLogin()"/>
+    <div class="field"><label>Client Token (Security Token)</label><input type="text" id="wa-client-token" placeholder="Client-Token (opcional, para segurança adicional)"/></div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap">
+      <button class="btn btn-green btn-sm" onclick="salvarConfigWA()">💾 Salvar Config</button>
+      <button class="btn btn-ghost btn-sm" onclick="testarConexaoWA()">🔌 Testar Conexão</button>
+      <a href="https://www.z-api.io" target="_blank" class="btn btn-ghost btn-sm">🌐 Criar conta Z-API</a>
     </div>
-    <button class="btn btn-pink btn-block" id="login-btn" onclick="doLogin()">Entrar no Gabinete</button>
-    <p style="font-size:10px;color:var(--gray);text-align:center;margin-top:12px">
-      Esqueceu a senha? Fale com o administrador.
-    </p>
-    <button class="btn btn-ghost btn-block btn-sm" style="margin-top:8px" onclick="showPub()">
-      🔗 Formulário público de cadastro
-    </button>
+    <div id="wa-config-info" style="margin-top:10px;font-size:11px;color:var(--gray);line-height:1.6;background:var(--gray-ll);border-radius:8px;padding:9px;display:none">
+      <strong>Como obter suas credenciais:</strong><br/>
+      1. Acesse <a href="https://z-api.io" target="_blank" style="color:var(--green)">z-api.io</a> e crie sua conta<br/>
+      2. Crie uma instância e copie o <strong>Instance ID</strong> e o <strong>Token</strong><br/>
+      3. Conecte seu WhatsApp escaneando o QR Code na plataforma Z-API
+    </div>
+    <button style="margin-top:7px;background:none;border:none;font-size:11px;color:var(--pink-d);cursor:pointer;padding:0" onclick="toggleWAInfo()">❓ Como configurar?</button>
   </div>
-</div>
 
-<!-- ════════════════ FORMULÁRIO PÚBLICO ════════════════ -->
-<div class="pub-screen" id="pubScreen">
-  <div style="max-width:480px;margin:0 auto;padding:20px">
-    <div style="text-align:center;margin-bottom:20px">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='80' viewBox='0 0 260 80'%3E%3Crect width='260' height='80' fill='%23E91E8C' rx='12'/%3E%3Ctext x='130' y='48' font-family='Arial,sans-serif' font-size='22' font-weight='900' fill='white' text-anchor='middle'%3ELuana Marques%3C/text%3E%3C/svg%3E" style="width:80%;max-width:240px;height:auto;display:block;margin:0 auto"/>
-      <h2 style="font-size:17px;font-weight:800;margin-top:12px">Cadastro do Eleitor</h2>
-      <p style="font-size:12px;color:var(--gray)">Novo Gama · GO</p>
+  <!-- Envio individual -->
+  <div class="card">
+    <div class="sec-title" style="margin-bottom:10px">📤 Enviar Mensagem Individual</div>
+    <div class="field">
+      <label>Destinatário</label>
+      <div style="display:flex;gap:7px">
+        <select id="wa-dest-cont" style="flex:1" onchange="preencheWADest()">
+          <option value="">— Selecionar contato —</option>
+        </select>
+        <span style="line-height:42px;color:var(--gray);font-size:12px">ou</span>
+        <input type="tel" id="wa-dest-tel" placeholder="(61) 9 0000-0000" style="flex:1"/>
+      </div>
     </div>
-    <div class="card">
-      <div class="field"><label>Nome completo *</label>
-        <input type="text" id="pub-nome" placeholder="Seu nome"/>
+    <div class="field">
+      <label>Mensagem</label>
+      <textarea id="wa-msg-ind" rows="4" placeholder="Digite sua mensagem..."></textarea>
+      <div style="display:flex;justify-content:space-between;margin-top:3px">
+        <span style="font-size:10px;color:var(--gray)">Use *negrito*, _itálico_, ~riscado~</span>
+        <span style="font-size:10px;color:var(--gray)" id="wa-char-count">0 caracteres</span>
       </div>
-      <div class="field"><label>WhatsApp *</label>
-        <input type="tel" id="pub-tel" placeholder="(61) 9 0000-0000"/>
+    </div>
+    <div class="field">
+      <label>Variáveis disponíveis</label>
+      <div style="display:flex;gap:5px;flex-wrap:wrap">
+        <button class="btn btn-ghost btn-sm" style="font-size:10px" onclick="insertVar('{{nome}}')">{{nome}}</button>
+        <button class="btn btn-ghost btn-sm" style="font-size:10px" onclick="insertVar('{{bairro}}')">{{bairro}}</button>
+        <button class="btn btn-ghost btn-sm" style="font-size:10px" onclick="insertVar('{{cidade}}')">{{cidade}}</button>
       </div>
-      <div class="field"><label>E-mail</label>
-        <input type="email" id="pub-email" placeholder="opcional"/>
-      </div>
-      <div class="field"><label>Data de nascimento</label>
-        <input type="date" id="pub-nasc"/>
-      </div>
-      <div class="field"><label>Bairro</label>
-        <input type="text" id="pub-bairro" placeholder="Seu bairro"/>
-      </div>
-      <div class="field"><label>Cidade</label>
-        <input type="text" id="pub-cidade" value="Novo Gama"/>
-      </div>
-      <div class="field"><label>Em quem votou para vereador(a)?</label>
-        <select id="pub-vota">
-          <option value="">-- Selecione --</option>
-          <option value="Luana Marques">Luana Marques</option>
-          <option value="Outro">Outro candidato</option>
-          <option value="Não votou">Não votou / Branco</option>
+    </div>
+    <button class="btn btn-sm" style="background:#25D366;color:#fff;width:100%" onclick="enviarWAIndividual()">📲 Enviar WhatsApp</button>
+  </div>
+
+  <!-- Disparo em massa -->
+  <div class="card card-pink">
+    <div class="sec-title" style="color:var(--pink-d);margin-bottom:10px">📢 Disparo em Massa</div>
+    <div class="field">
+      <label>Filtrar destinatários</label>
+      <div style="display:flex;gap:7px;flex-wrap:wrap">
+        <select id="wa-filtro-tipo" style="flex:1">
+          <option value="todos">Todos os contatos</option>
+          <option value="Eleitor">Eleitores</option>
+          <option value="Liderança">Lideranças</option>
+          <option value="Colaborador">Colaboradores</option>
+          <option value="Político">Políticos</option>
+          <option value="Imprensa">Imprensa</option>
+        </select>
+        <select id="wa-filtro-env" style="flex:1">
+          <option value="todos">Todos os envolvimentos</option>
+          <option value="Engajado">🔥 Engajados</option>
+          <option value="Favorável">😊 Favoráveis</option>
+          <option value="Neutro">😐 Neutros</option>
+          <option value="Distante">😟 Distantes</option>
         </select>
       </div>
-      <div class="field"><label>Observações</label>
-        <textarea id="pub-obs" placeholder="Alguma demanda ou recado?"></textarea>
+      <button class="btn btn-ghost btn-sm" style="margin-top:6px;width:100%" onclick="previewDestinatarios()">👀 Ver destinatários</button>
+      <div id="wa-preview-dest" style="margin-top:7px;display:none;background:var(--gray-ll);border-radius:8px;padding:9px;max-height:120px;overflow-y:auto;font-size:11px;color:var(--gray)"></div>
+    </div>
+    <div class="field">
+      <label>Mensagem do disparo</label>
+      <textarea id="wa-msg-massa" rows="5" placeholder="Digite a mensagem...&#10;&#10;Use {{nome}} para personalizar com o nome do contato.&#10;Use {{bairro}} para o bairro."></textarea>
+    </div>
+    <div class="field">
+      <label>⏱️ Intervalo entre envios (segundos)</label>
+      <input type="number" id="wa-intervalo" value="4" min="2" max="60" style="width:100px"/>
+      <span style="font-size:10px;color:var(--orange);margin-left:8px">⚠️ Mínimo 2s para evitar bloqueio</span>
+    </div>
+    <div id="wa-progress" style="display:none;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:12px;font-weight:700" id="wa-prog-txt">Aguardando...</span>
+        <button class="btn btn-ghost btn-sm" style="border-color:var(--red);color:var(--red);padding:3px 9px" onclick="pararDisparo()">⏹ Parar</button>
       </div>
-      <div id="pub-msg" style="margin-bottom:10px;display:none"></div>
-      <button class="btn btn-pink btn-block" onclick="pubSubmit()">✅ Enviar Cadastro</button>
-      <button class="btn btn-ghost btn-block btn-sm" style="margin-top:8px" onclick="voltarLogin()">
-        Voltar ao login
-      </button>
+      <div class="prog-bar"><div class="prog-fill" id="wa-prog-bar" style="background:var(--green);width:0%"></div></div>
+      <div style="font-size:10px;color:var(--gray);margin-top:3px" id="wa-prog-sub"></div>
     </div>
+    <button class="btn btn-pink btn-block" id="btn-disparar" onclick="iniciarDisparo()">🚀 Iniciar Disparo</button>
   </div>
-</div>
 
-<!-- ════════════════ APP SHELL ════════════════ -->
-<nav class="sidenav">
-  <div class="nav-logo-area">
-    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Ccircle cx='14' cy='14' r='14' fill='white'/%3E%3Ctext x='14' y='19' font-family='Arial' font-size='14' text-anchor='middle'%3E💎%3C/text%3E%3C/svg%3E" width="28" height="28" style="display:block" alt="Diamante"/>
-    <span style="font-size:7px;font-weight:900;color:#fff;letter-spacing:.05em;text-align:center;line-height:1.2">GABINETE</span>
-  </div>
-  <button class="nav-item active" id="nav-inicio"     onclick="goTo('inicio')">
-    <span class="nav-icon">🏠</span><span class="nav-label">Início</span>
-  </button>
-  <button class="nav-item" id="nav-contatos"           onclick="goTo('contatos')">
-    <span class="nav-icon">👥</span><span class="nav-label">Contatos</span>
-  </button>
-  <button class="nav-item" id="nav-captacao"           onclick="goTo('captacao')">
-    <span class="nav-icon">🔗</span><span class="nav-label">Captação</span>
-  </button>
-  <button class="nav-item" id="nav-protocolos"         onclick="goTo('protocolos')">
-    <span class="nav-icon">📋</span><span class="nav-label">Protocolos</span>
-  </button>
-  <button class="nav-item" id="nav-agenda"             onclick="goTo('agenda')">
-    <span class="nav-icon">📅</span><span class="nav-label">Agenda</span>
-  </button>
-  <button class="nav-item" id="nav-lembretes"          onclick="goTo('lembretes')">
-    <span class="nav-icon">📌</span><span class="nav-label">Lembretes</span>
-    <span class="nav-badge" id="nav-lem-b" style="display:none">0</span>
-  </button>
-  <button class="nav-item" id="nav-aniversariantes"    onclick="goTo('aniversariantes')">
-    <span class="nav-icon">🎂</span><span class="nav-label">Anivs.</span>
-  </button>
-  <button class="nav-item" id="nav-whatsapp"           onclick="goTo('whatsapp')">
-    <span class="nav-icon">💬</span><span class="nav-label">WhatsApp</span>
-  </button>
-  <button class="nav-item" id="nav-perfil" style="margin-top:auto" onclick="goTo('perfil')">
-    <span class="nav-icon">⚙️</span><span class="nav-label">Perfil</span>
-  </button>
-</nav>
-
-<div class="content">
-
-<!-- ═══ INÍCIO ═══ -->
-<div class="page active" id="page-inicio">
-  <div class="page-header">
-    <div class="page-header-logo">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='55' viewBox='0 0 200 55'%3E%3Crect width='200' height='55' fill='%23E91E8C' rx='8'/%3E%3Ctext x='100' y='33' font-family='Arial,sans-serif' font-size='16' font-weight='900' fill='white' text-anchor='middle'%3ELuana Marques%3C/text%3E%3C/svg%3E" style="height:55px;width:auto;display:block" alt="Luana Marques"/>
-    </div>
-    <div class="hdr-info" style="text-align:right">
-      <div id="hdrRole"></div>
-      <div id="hdrNome" style="font-size:11px;color:var(--gray);margin-top:2px"></div>
-    </div>
-  </div>
-  <div class="stats-row">
-    <div class="stat-box"><div class="stat-num" id="st-membros">0</div><div class="stat-lbl">Membros</div></div>
-    <div class="stat-box"><div class="stat-num" id="st-protos">0</div><div class="stat-lbl">Protocolos</div></div>
-    <div class="stat-box"><div class="stat-num" id="st-agenda">0</div><div class="stat-lbl">Eventos hoje</div></div>
-    <div class="stat-box"><div class="stat-num" id="st-urg">0</div><div class="stat-lbl">Urgentes</div></div>
-  </div>
-  <div class="home-grid">
-    <div class="home-tile" onclick="goTo('contatos')"><div class="tile-icon">👥</div><div class="tile-label">Contatos</div></div>
-    <div class="home-tile" onclick="goTo('protocolos')"><div class="tile-icon">📋</div><div class="tile-label">Protocolos</div></div>
-    <div class="home-tile" onclick="goTo('agenda')"><div class="tile-icon">📅</div><div class="tile-label">Agenda</div></div>
-    <div class="home-tile" onclick="goTo('captacao')"><div class="tile-icon">🔗</div><div class="tile-label">Captação</div></div>
-    <div class="home-tile" onclick="goTo('whatsapp')"><div class="tile-icon">💬</div><div class="tile-label">WhatsApp</div></div>
-    <div class="home-tile" onclick="goTo('lembretes')"><div class="tile-icon">📌</div><div class="tile-label">Lembretes</div></div>
-  </div>
+  <!-- Mensagens Automáticas -->
   <div class="card">
-    <div class="card-title">📋 Protocolos Urgentes</div>
-    <div id="home-urgentes"><p style="font-size:12px;color:var(--gray)">Carregando...</p></div>
-  </div>
-</div>
-
-<!-- ═══ CONTATOS ═══ -->
-<div class="page" id="page-contatos">
-  <div class="page-header">
-    <span style="font-size:18px">👥</span>
-    <span style="font-size:15px;font-weight:800">Contatos</span>
-    <div style="margin-left:auto;display:flex;gap:6px">
-      <button class="btn btn-ghost btn-sm" onclick="exportCSV()">📥 CSV</button>
-      <button class="btn btn-pink btn-sm" onclick="openM('m-cont')">+ Novo</button>
+    <div class="sec-title" style="margin-bottom:10px">🤖 Mensagens Automáticas</div>
+    <div style="background:var(--gray-ll);border-radius:10px;padding:10px;margin-bottom:12px;font-size:11px;color:var(--gray);line-height:1.6">
+      Configure mensagens que serão enviadas automaticamente via Z-API.<br/>
+      Ative cada regra individualmente. Os envios ficam registrados no histórico.
     </div>
-  </div>
-  <div class="field"><input type="search" placeholder="🔍 Buscar contato..." oninput="filtC(this)"/></div>
-  <div id="cont-list"><div class="empty"><div class="empty-icon">👥</div><p>Carregando...</p></div></div>
-</div>
-
-<!-- ═══ CAPTAÇÃO ═══ -->
-<div class="page" id="page-captacao">
-  <div class="page-header">
-    <span style="font-size:18px">🔗</span>
-    <span style="font-size:15px;font-weight:800">Link de Captação</span>
-  </div>
-  <div class="card">
-    <p style="font-size:12px;color:var(--gray);margin-bottom:10px;line-height:1.5">
-      Compartilhe este link. O eleitor preenche o formulário e é cadastrado automaticamente.
-    </p>
-    <div style="background:var(--gray-l);border-radius:10px;padding:10px;word-break:break-all;font-size:11px;color:var(--gray-d);margin-bottom:10px" id="captacao-link">Carregando...</div>
-    <div style="display:flex;gap:8px">
-      <button class="btn btn-pink btn-sm" onclick="copiarLink()">📋 Copiar</button>
-      <button class="btn btn-ghost btn-sm" onclick="compartilharWA()">💬 Enviar WA</button>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-title">📥 Cadastros via Link <span id="captacao-count" style="font-size:11px;color:var(--gray)"></span></div>
-    <div id="captacao-list"><div class="empty" style="padding:14px"><p>Nenhum cadastro ainda</p></div></div>
-  </div>
-</div>
-
-<!-- ═══ PROTOCOLOS ═══ -->
-<div class="page" id="page-protocolos">
-  <div class="page-header">
-    <span style="font-size:18px">📋</span>
-    <span style="font-size:15px;font-weight:800">Protocolos</span>
-    <div style="margin-left:auto;display:flex;gap:6px">
-      <select id="filtro-assunto" onchange="filtPr()" style="font-size:11px;border:1.5px solid var(--gray-l);border-radius:8px;padding:5px 8px;background:var(--white)">
-        <option value="">Todos</option>
-        <option>Saúde</option><option>Educação</option><option>Infraestrutura</option>
-        <option>Segurança</option><option>Social</option><option>Moradia</option>
-        <option>Emprego</option><option>Meio Ambiente</option><option>Outros</option>
-      </select>
-      <button class="btn btn-pink btn-sm" onclick="openM('m-proto')">+ Novo</button>
-    </div>
-  </div>
-  <div class="field"><input type="search" placeholder="🔍 Buscar protocolo..." oninput="filtPrTexto(this)"/></div>
-  <div id="pr-empty" class="empty" style="display:none"><div class="empty-icon">📋</div><p>Nenhum protocolo</p></div>
-  <div id="proto-list"></div>
-</div>
-
-<!-- ═══ AGENDA ═══ -->
-<div class="page" id="page-agenda">
-  <div class="page-header">
-    <span style="font-size:18px">📅</span>
-    <span style="font-size:15px;font-weight:800">Agenda</span>
-    <button class="btn btn-pink btn-sm" style="margin-left:auto" onclick="openM('m-ag')">+ Novo</button>
-  </div>
-  <div class="field"><input type="search" placeholder="🔍 Buscar evento..." oninput="filtAg(this)"/></div>
-  <div id="ag-list"><div class="empty"><div class="empty-icon">📅</div><p>Carregando...</p></div></div>
-</div>
-
-<!-- ═══ LEMBRETES ═══ -->
-<div class="page" id="page-lembretes">
-  <div class="page-header">
-    <span style="font-size:18px">📌</span>
-    <span style="font-size:15px;font-weight:800">Lembretes</span>
-    <button class="btn btn-pink btn-sm" style="margin-left:auto" onclick="openM('m-lem')">+ Novo</button>
-  </div>
-  <div id="lem-list"></div>
-</div>
-
-<!-- ═══ ANIVERSARIANTES ═══ -->
-<div class="page" id="page-aniversariantes">
-  <div class="page-header">
-    <span style="font-size:18px">🎂</span>
-    <span style="font-size:15px;font-weight:800">Aniversariantes</span>
-  </div>
-  <div id="aniv-hoje" class="card" style="margin-bottom:10px">
-    <div class="card-title">🎉 Hoje</div>
-    <div id="aniv-hoje-list"><p style="font-size:12px;color:var(--gray)">Carregando...</p></div>
-  </div>
-  <div class="card">
-    <div class="card-title">📅 Próximos 30 dias</div>
-    <div id="aniv-prox-list"><p style="font-size:12px;color:var(--gray)">Carregando...</p></div>
-  </div>
-</div>
-
-<!-- ═══ WHATSAPP ═══ -->
-<div class="page" id="page-whatsapp">
-  <div class="page-header">
-    <span style="font-size:18px">💬</span>
-    <span style="font-size:15px;font-weight:800">WhatsApp (Z-API)</span>
-  </div>
-  <div class="card" id="wa-config-card">
-    <div class="card-title">⚙️ Configuração Z-API</div>
-    <div class="field"><label>Instance ID</label>
-      <input type="text" id="wa-instance" placeholder="Ex: 3D..."/>
-    </div>
-    <div class="field"><label>Token</label>
-      <input type="text" id="wa-token" placeholder="Seu token Z-API"/>
-    </div>
-    <button class="btn btn-pink btn-sm" onclick="salvarConfigWA()">💾 Salvar Config</button>
-    <a href="https://www.z-api.io" target="_blank" style="display:block;margin-top:8px;font-size:11px;color:var(--pink)">
-      → Criar conta gratuita na Z-API
-    </a>
-  </div>
-  <div class="card">
-    <div class="card-title">📤 Enviar Mensagem</div>
-    <div class="field"><label>Para (WhatsApp)</label>
-      <input type="tel" id="wa-para" placeholder="(61) 9 0000-0000"/>
-    </div>
-    <div class="field"><label>Mensagem</label>
-      <textarea id="wa-msg" rows="3" placeholder="Digite sua mensagem..."></textarea>
-    </div>
-    <button class="btn btn-green btn-sm" onclick="enviarWA()">💬 Enviar WhatsApp</button>
-  </div>
-  <div class="card">
-    <div class="card-title">📋 Histórico de Envios</div>
-    <div id="wa-historico"><p style="font-size:12px;color:var(--gray)">Carregando...</p></div>
-  </div>
-</div>
-
-<!-- ═══ PERFIL ═══ -->
-<div class="page" id="page-perfil">
-  <div class="page-header" style="flex-direction:column;align-items:center;gap:8px">
-    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='75' viewBox='0 0 200 75'%3E%3Crect width='200' height='75' fill='%23E91E8C' rx='10'/%3E%3Ctext x='100' y='44' font-family='Arial,sans-serif' font-size='18' font-weight='900' fill='white' text-anchor='middle'%3ELuana Marques%3C/text%3E%3C/svg%3E" style="height:75px;width:auto;display:block;margin:0 auto" alt="Luana Marques"/>
-    <div id="perfil-role-badge"></div>
-    <p style="font-size:11px;color:var(--gray)">Usuário: <strong id="perfil-user"></strong></p>
-  </div>
-  <div class="card">
-    <div class="card-title">👤 Meus dados</div>
-    <div class="field"><label>Nome</label><input type="text" id="perfil-nome-input"/></div>
-    <div class="field"><label>WhatsApp</label><input type="tel" id="perfil-wa-input" placeholder="(61) 9 0000-0000"/></div>
-    <button class="btn btn-pink btn-sm" onclick="salvarPerfil()">💾 Salvar</button>
-  </div>
-  <div class="card">
-    <div class="card-title">🔑 Alterar senha</div>
-    <div class="field"><label>Nova senha</label><input type="password" id="nova-senha" placeholder="mínimo 6 caracteres"/></div>
-    <button class="btn btn-ghost btn-sm" onclick="alterarSenha()">🔄 Alterar</button>
-  </div>
-  <div id="admin-users" style="display:none">
-    <div class="card">
-      <div class="card-title">👥 Gerenciar Usuários</div>
-      <button class="btn btn-pink btn-sm" style="margin-bottom:10px" onclick="openM('m-user')">+ Convidar usuário</button>
-      <div id="user-list"></div>
-    </div>
-  </div>
-  <div class="card" style="margin-top:4px">
-    <button class="btn btn-red btn-block" onclick="doLogout()">🚪 Sair</button>
-  </div>
-</div>
-
-</div><!-- /content -->
-
-<!-- ════════ MODAIS ════════ -->
-
-<!-- Modal Contato -->
-<div class="modal-overlay" id="m-cont">
-<div class="modal">
-  <div class="modal-title" id="m-cont-title">👤 Novo Contato</div>
-  <input type="hidden" id="cont-id"/>
-  <div class="field"><label>Nome *</label><input type="text" id="c-nome"/></div>
-  <div class="field"><label>Telefone/WhatsApp</label><input type="tel" id="c-tel"/></div>
-  <div class="field"><label>E-mail</label><input type="email" id="c-email"/></div>
-  <div class="field"><label>Nascimento</label><input type="date" id="c-nasc"/></div>
-  <div class="field"><label>Bairro</label><input type="text" id="c-bairro"/></div>
-  <div class="field"><label>Cidade</label><input type="text" id="c-cidade" value="Novo Gama"/></div>
-  <div class="field"><label>Engajamento</label>
-    <select id="c-eng">
-      <option>Engajado</option><option selected>Favorável</option>
-      <option>Neutro</option><option>Distante</option>
-    </select>
-  </div>
-  <div class="field"><label>Vota em</label><input type="text" id="c-vota"/></div>
-  <div class="field"><label>Observação</label><textarea id="c-obs"></textarea></div>
-  <div style="display:flex;gap:8px">
-    <button class="btn btn-pink" style="flex:1" onclick="salvarCont()">💾 Salvar</button>
-    <button class="btn btn-ghost" onclick="closeM('m-cont')">Cancelar</button>
-    <button class="btn btn-red btn-sm" id="btn-del-cont" onclick="delCont()" style="display:none">🗑️</button>
-  </div>
-  <!-- Mini-chat WhatsApp para o contato -->
-  <div id="cont-wa-area" style="display:none;margin-top:14px;border-top:1px solid var(--gray-l);padding-top:12px">
-    <div class="card-title" style="margin-bottom:8px">💬 Enviar WhatsApp</div>
-    <div class="field"><textarea id="cont-wa-msg" rows="2" placeholder="Mensagem para este contato..."></textarea></div>
-    <button class="btn btn-green btn-sm" onclick="enviarWAContato()">💬 Enviar</button>
-  </div>
-</div>
-</div>
-
-<!-- Modal Protocolo -->
-<div class="modal-overlay" id="m-proto">
-<div class="modal">
-  <div class="modal-title" id="m-proto-title">📋 Novo Protocolo</div>
-  <input type="hidden" id="proto-id"/>
-  <div class="field"><label>Título *</label><input type="text" id="proto-titulo" placeholder="Descrição do protocolo"/></div>
-  <div class="field"><label>Assunto *</label>
-    <select id="proto-assunto">
-      <option>Saúde</option><option>Educação</option><option>Infraestrutura</option>
-      <option>Segurança</option><option>Social</option><option>Moradia</option>
-      <option>Emprego</option><option>Meio Ambiente</option><option>Outros</option>
-    </select>
-  </div>
-  <div class="field"><label>Status</label>
-    <select id="proto-status">
-      <option>Aberto</option><option>Em andamento</option>
-      <option>Resolvido</option><option>Urgente</option><option>Arquivado</option>
-    </select>
-  </div>
-  <div class="field"><label>Prioridade</label>
-    <select id="proto-prio"><option>Baixa</option><option selected>Normal</option><option>Alta</option><option>Urgente</option></select>
-  </div>
-  <div class="field"><label>Prazo</label><input type="date" id="proto-prazo"/></div>
-  <div class="field"><label>Contato relacionado</label>
-    <select id="proto-membro"><option value="">-- nenhum --</option></select>
-  </div>
-  <div class="field"><label>Descrição</label><textarea id="proto-desc"></textarea></div>
-  <!-- Chat do protocolo -->
-  <div id="proto-chat-area" style="display:none;margin-top:10px;border-top:1px solid var(--gray-l);padding-top:10px">
-    <div class="card-title" style="margin-bottom:6px">💬 Mensagens</div>
-    <div class="chat-area" id="proto-chat-msgs" style="max-height:200px;overflow-y:auto"></div>
-    <div style="display:flex;gap:6px;margin-top:8px">
-      <input type="text" id="proto-chat-input" placeholder="Nova mensagem..." style="flex:1;border:1.5px solid var(--gray-l);border-radius:10px;padding:8px 12px;font-size:13px"/>
-      <button class="btn btn-pink btn-sm" onclick="enviarMensagemProto()">➤</button>
-      <button class="btn btn-green btn-sm" onclick="enviarMensagemProtoWA()">💬</button>
-    </div>
-  </div>
-  <div style="display:flex;gap:8px;margin-top:12px">
-    <button class="btn btn-pink" style="flex:1" onclick="salvarProto()">💾 Salvar</button>
-    <button class="btn btn-ghost" onclick="closeM('m-proto')">Cancelar</button>
-    <button class="btn btn-red btn-sm" id="btn-del-proto" onclick="delProto()" style="display:none">🗑️</button>
-  </div>
-</div>
-</div>
-
-<!-- Modal Agenda -->
-<div class="modal-overlay" id="m-ag">
-<div class="modal">
-  <div class="modal-title" id="m-ag-title">📅 Novo Evento</div>
-  <input type="hidden" id="ag-id"/>
-  <div class="field"><label>Título *</label><input type="text" id="ag-titulo"/></div>
-  <div class="field"><label>Tipo</label>
-    <select id="ag-tipo">
-      <option>Reunião</option><option>Evento</option><option>Audiência</option>
-      <option>Sessão</option><option>Visita</option><option>Outro</option>
-    </select>
-  </div>
-  <div class="field"><label>Início *</label><input type="datetime-local" id="ag-inicio"/></div>
-  <div class="field"><label>Fim</label><input type="datetime-local" id="ag-fim"/></div>
-  <div class="field"><label>Local</label><input type="text" id="ag-local"/></div>
-  <div class="field"><label>Descrição</label><textarea id="ag-desc"></textarea></div>
-  <div style="display:flex;gap:8px">
-    <button class="btn btn-pink" style="flex:1" onclick="salvarAg()">💾 Salvar</button>
-    <button class="btn btn-ghost" onclick="closeM('m-ag')">Cancelar</button>
-    <button class="btn btn-red btn-sm" id="btn-del-ag" onclick="delAg()" style="display:none">🗑️</button>
-  </div>
-</div>
-</div>
-
-<!-- Modal Lembrete -->
-<div class="modal-overlay" id="m-lem">
-<div class="modal">
-  <div class="modal-title">📌 Novo Lembrete</div>
-  <div class="field"><label>Texto *</label><textarea id="lem-texto" rows="3"></textarea></div>
-  <div style="display:flex;gap:8px">
-    <button class="btn btn-pink" style="flex:1" onclick="salvarLem()">💾 Salvar</button>
-    <button class="btn btn-ghost" onclick="closeM('m-lem')">Cancelar</button>
-  </div>
-</div>
-</div>
-
-<!-- Modal Usuário (admin) -->
-<div class="modal-overlay" id="m-user">
-<div class="modal">
-  <div class="modal-title">👤 Convidar Usuário</div>
-  <div class="field"><label>E-mail *</label><input type="email" id="u-email" placeholder="usuario@email.com"/></div>
-  <div class="field"><label>Nome *</label><input type="text" id="u-nome"/></div>
-  <div class="field"><label>Perfil</label>
-    <select id="u-role">
-      <option value="admin">🔑 Admin</option>
-      <option value="colaborador">✏️ Colaborador</option>
-      <option value="visitante" selected>👁️ Visitante</option>
-    </select>
-  </div>
-  <div class="field"><label>Senha temporária</label><input type="password" id="u-senha" placeholder="mínimo 6 caracteres"/></div>
-  <div style="display:flex;gap:8px">
-    <button class="btn btn-pink" style="flex:1" onclick="criarUsuario()">📧 Criar</button>
-    <button class="btn btn-ghost" onclick="closeM('m-user')">Cancelar</button>
-  </div>
-</div>
-</div>
-
-<script>
-// ═══════════════════════════════════════════════════════
-// CONFIGURAÇÃO SUPABASE
-// ⚠️ Substitua pelos seus dados do projeto Supabase!
-// ═══════════════════════════════════════════════════════
-const SUPABASE_URL = 'https://ubgzimtyrsazzghbqxgl.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InViZ3ppbXR5cnNhenpnaGJxeGdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1MTg4MzIsImV4cCI6MjA5NTA5NDgzMn0.DJSWNbpQ2BG1wL5KibbEuAEtYhiVZMW9gFqUAzPLQxY';
-const { createClient } = supabase;
-const db = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-// ═══ ESTADO ═══
-let currentUser  = null;
-let currentPerfil = null;
-let waConfig     = JSON.parse(localStorage.getItem('wa_config')||'{}');
-
-// ═══ LOADING ═══
-function showLoad(){ document.getElementById('loadingOverlay').classList.add('show') }
-function hideLoad(){ document.getElementById('loadingOverlay').classList.remove('show') }
-
-// ═══ TOAST ═══
-function toast(msg){
-  const el = document.getElementById('toastEl');
-  el.textContent = msg; el.classList.add('show');
-  setTimeout(()=>el.classList.remove('show'), 2800);
-}
-
-// ═══ MODAIS ═══
-function openM(id){ document.getElementById(id).classList.add('open') }
-function closeM(id){ document.getElementById(id).classList.remove('open') }
-document.querySelectorAll('.modal-overlay').forEach(o=>
-  o.addEventListener('click', e=>{ if(e.target===o) o.classList.remove('open') }));
-
-// ═══════════════════════════════════════════════════════
-// AUTH
-// ═══════════════════════════════════════════════════════
-async function doLogin(){
-  const email = document.getElementById('login-email').value.trim();
-  const pass  = document.getElementById('login-pass').value;
-  const errEl = document.getElementById('login-error');
-  const btn   = document.getElementById('login-btn');
-  errEl.style.display='none'; btn.disabled=true; btn.textContent='Entrando...';
-  try{
-    const { data, error } = await db.auth.signInWithPassword({ email, password: pass });
-    if(error) throw error;
-    await iniciarSessao(data.user);
-  } catch(e){
-    errEl.style.display='block';
-    errEl.textContent='❌ '+(e.message||'Erro ao fazer login');
-  }
-  btn.disabled=false; btn.textContent='Entrar no Gabinete';
-}
-
-async function iniciarSessao(user){
-  currentUser = user;
-  // Busca perfil
-  const { data: perfil } = await db.from('perfis').select('*').eq('id',user.id).single();
-  currentPerfil = perfil;
-  document.getElementById('loginScreen').style.display='none';
-  document.getElementById('pubScreen').style.display='none';
-  updateHeader();
-  await loadStats();
-  await renderConts();
-  await renderProtos();
-  await renderAg();
-  await renderLem();
-  await renderAniversariantes();
-  await renderWAHistorico();
-  await renderUsers();
-  // Admin features
-  if(currentPerfil?.role==='admin'){
-    document.getElementById('admin-users').style.display='block';
-  }
-  // Link de captação
-  document.getElementById('captacao-link').textContent = window.location.href.split('?')[0]+'?cadastro=1';
-  // Atualiza perfil page
-  document.getElementById('perfil-user').textContent = currentPerfil?.nome || user.email;
-  document.getElementById('perfil-nome-input').value  = currentPerfil?.nome || '';
-  document.getElementById('perfil-wa-input').value    = currentPerfil?.whatsapp || '';
-  const roleMap={admin:'🔑 Admin',colaborador:'✏️ Colaborador',visitante:'👁️ Visitante'};
-  const cls={admin:'role-admin',colaborador:'role-colab',visitante:'role-visit'};
-  const r = currentPerfil?.role||'visitante';
-  document.getElementById('perfil-role-badge').innerHTML=`<span class="${cls[r]}">${roleMap[r]}</span>`;
-  // WA config
-  if(waConfig.instance) document.getElementById('wa-instance').value = waConfig.instance;
-  if(waConfig.token)    document.getElementById('wa-token').value    = waConfig.token;
-}
-
-async function doLogout(){
-  await db.auth.signOut();
-  currentUser=null; currentPerfil=null;
-  document.getElementById('loginScreen').style.display='flex';
-}
-
-function updateHeader(){
-  if(!currentPerfil) return;
-  const roleMap={admin:'🔑 Admin',colaborador:'✏️ Colaborador',visitante:'👁️ Visitante'};
-  const cls={admin:'role-admin',colaborador:'role-colab',visitante:'role-visit'};
-  const r = currentPerfil.role||'visitante';
-  document.getElementById('hdrRole').innerHTML=`<span class="${cls[r]}">${roleMap[r]}</span>`;
-  document.getElementById('hdrNome').textContent = currentPerfil.nome;
-}
-
-// ═══════════════════════════════════════════════════════
-// NAVEGAÇÃO
-// ═══════════════════════════════════════════════════════
-function goTo(p){
-  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
-  const pg  = document.getElementById('page-'+p);
-  const nav = document.getElementById('nav-'+p);
-  if(pg)  pg.classList.add('active');
-  if(nav) nav.classList.add('active');
-  document.querySelector('.content').scrollTop = 0;
-  if(p==='aniversariantes') renderAniversariantes();
-  if(p==='whatsapp')        renderWAHistorico();
-  if(p==='captacao')        renderCaptacao();
-}
-
-// ═══════════════════════════════════════════════════════
-// STATS
-// ═══════════════════════════════════════════════════════
-async function loadStats(){
-  const [{count:cm}, {count:cp}, {count:cu}] = await Promise.all([
-    db.from('membros').select('*',{count:'exact',head:true}),
-    db.from('protocolos').select('*',{count:'exact',head:true}),
-    db.from('protocolos').select('*',{count:'exact',head:true}).eq('status','Urgente'),
-  ]);
-  document.getElementById('st-membros').textContent = cm||0;
-  document.getElementById('st-protos').textContent  = cp||0;
-  document.getElementById('st-urg').textContent     = cu||0;
-  // Eventos hoje
-  const hoje = new Date().toISOString().split('T')[0];
-  const {count:ca} = await db.from('agenda').select('*',{count:'exact',head:true})
-    .gte('inicio',hoje+'T00:00:00').lte('inicio',hoje+'T23:59:59');
-  document.getElementById('st-agenda').textContent = ca||0;
-  // Urgentes na home
-  const {data:urg} = await db.from('protocolos').select('*').eq('status','Urgente').limit(3);
-  const hEl = document.getElementById('home-urgentes');
-  if(!urg||!urg.length){ hEl.innerHTML='<p style="font-size:12px;color:var(--gray)">Nenhum protocolo urgente 👍</p>'; return; }
-  hEl.innerHTML = urg.map(p=>`<div style="padding:6px 0;border-bottom:1px solid var(--gray-l)">
-    <span class="badge br" style="margin-right:6px">Urgente</span>
-    <span style="font-size:12px">${p.numero} — ${p.titulo}</span>
-  </div>`).join('');
-}
-
-// ═══════════════════════════════════════════════════════
-// CONTATOS
-// ═══════════════════════════════════════════════════════
-let todosConts = [];
-async function renderConts(){
-  const {data} = await db.from('membros').select('*').order('nome');
-  todosConts = data||[];
-  _renderContLista(todosConts);
-}
-function _renderContLista(lista){
-  const el = document.getElementById('cont-list');
-  if(!lista.length){ el.innerHTML='<div class="empty"><div class="empty-icon">👥</div><p>Nenhum contato</p></div>'; return; }
-  const engBadge={Engajado:'bg',Favorável:'bb',Neutro:'by',Distante:'br'};
-  el.innerHTML = lista.map(c=>`
-    <div class="cont-card" onclick="editCont('${c.id}')" style="border-left-color:var(--${engBadge[c.engajamento]=='bg'?'green':engBadge[c.engajamento]=='bb'?'blue':engBadge[c.engajamento]=='by'?'yellow':'red'})">
-      <div style="flex:1">
-        <div style="font-weight:700;font-size:14px">${c.nome}</div>
-        <div style="font-size:11px;color:var(--gray)">${c.telefone||''} ${c.bairro?'· '+c.bairro:''}</div>
+    <!-- Aniversário -->
+    <div class="api-option" id="auto-aniv-card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><h4>🎂 Feliz Aniversário</h4><p>Envia automaticamente no dia do aniversário do contato</p></div>
+        <label style="cursor:pointer;display:flex;align-items:center;gap:6px">
+          <input type="checkbox" id="auto-aniv-on" onchange="salvarAuto()" style="width:16px;height:16px"/>
+          <span style="font-size:11px;color:var(--gray)">Ativo</span>
+        </label>
       </div>
-      <span class="badge ${engBadge[c.engajamento]||'bgr'}">${c.engajamento}</span>
-    </div>`).join('');
-}
-function filtC(el){
-  const q = el.value.toLowerCase();
-  _renderContLista(todosConts.filter(c=>(c.nome+c.telefone+c.bairro+c.cidade).toLowerCase().includes(q)));
-}
-function editCont(id){
-  const c = todosConts.find(x=>x.id===id)||{};
-  document.getElementById('cont-id').value     = c.id||'';
-  document.getElementById('c-nome').value      = c.nome||'';
-  document.getElementById('c-tel').value       = c.telefone||'';
-  document.getElementById('c-email').value     = c.email||'';
-  document.getElementById('c-nasc').value      = c.nascimento||'';
-  document.getElementById('c-bairro').value    = c.bairro||'';
-  document.getElementById('c-cidade').value    = c.cidade||'Novo Gama';
-  document.getElementById('c-eng').value       = c.engajamento||'Neutro';
-  document.getElementById('c-vota').value      = c.vota_em||'';
-  document.getElementById('c-obs').value       = c.observacao||'';
-  const isEdit = !!c.id;
-  document.getElementById('m-cont-title').textContent = isEdit?'✏️ Editar Contato':'👤 Novo Contato';
-  document.getElementById('btn-del-cont').style.display = (isEdit&&currentPerfil?.role==='admin')?'block':'none';
-  document.getElementById('cont-wa-area').style.display = (isEdit&&c.telefone)?'block':'none';
-  openM('m-cont');
-}
-async function salvarCont(){
-  const id   = document.getElementById('cont-id').value;
-  const dados = {
-    nome:       document.getElementById('c-nome').value.trim(),
-    telefone:   document.getElementById('c-tel').value.trim(),
-    email:      document.getElementById('c-email').value.trim()||null,
-    nascimento: document.getElementById('c-nasc').value||null,
-    bairro:     document.getElementById('c-bairro').value.trim(),
-    cidade:     document.getElementById('c-cidade').value.trim()||'Novo Gama',
-    engajamento:document.getElementById('c-eng').value,
-    vota_em:    document.getElementById('c-vota').value.trim(),
-    observacao: document.getElementById('c-obs').value.trim(),
-    criado_por: currentUser.id,
-  };
-  if(!dados.nome){ toast('❌ Nome obrigatório'); return; }
-  showLoad();
-  if(id){ await db.from('membros').update(dados).eq('id',id); }
-  else  { await db.from('membros').insert(dados); }
-  hideLoad(); closeM('m-cont');
-  await renderConts(); await loadStats();
-  toast('✅ Contato salvo!');
-}
-async function delCont(){
-  const id = document.getElementById('cont-id').value;
-  if(!id||!confirm('Excluir contato?')) return;
-  showLoad();
-  await db.from('membros').delete().eq('id',id);
-  hideLoad(); closeM('m-cont');
-  await renderConts(); await loadStats();
-  toast('🗑️ Contato excluído');
-}
-function exportCSV(){
-  if(!todosConts.length){ toast('Nenhum contato para exportar'); return; }
-  const cols=['nome','telefone','email','nascimento','bairro','cidade','engajamento','vota_em','observacao','criado_em'];
-  const rows=[cols.join(','),...todosConts.map(c=>cols.map(k=>`"${(c[k]||'').toString().replace(/"/g,'""')}"`).join(','))];
-  const a=document.createElement('a');
-  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(rows.join('\\n'));
-  a.download='contatos_gabinete.csv'; a.click();
-}
+      <textarea id="auto-aniv-msg" rows="3" style="margin-top:8px" placeholder="Ex: Olá {{nome}}! 🎂 A Vereadora Luana Marques deseja a você um feliz aniversário! Muitas felicidades! 💎"></textarea>
+      <button class="btn btn-ghost btn-sm" style="margin-top:6px" onclick="testarAutoMensagem('aniv')">▶ Testar</button>
+    </div>
+    <!-- Boas-vindas cadastro -->
+    <div class="api-option" style="margin-top:7px" id="auto-bv-card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><h4>👋 Boas-vindas ao Cadastro</h4><p>Enviada ao novo eleitor cadastrado pelo formulário público</p></div>
+        <label style="cursor:pointer;display:flex;align-items:center;gap:6px">
+          <input type="checkbox" id="auto-bv-on" onchange="salvarAuto()" style="width:16px;height:16px"/>
+          <span style="font-size:11px;color:var(--gray)">Ativo</span>
+        </label>
+      </div>
+      <textarea id="auto-bv-msg" rows="3" style="margin-top:8px" placeholder="Ex: Olá {{nome}}! 💎 Você foi cadastrado(a) na equipe da Vereadora Luana Marques. Fique por dentro de todas as novidades do nosso gabinete!"></textarea>
+      <button class="btn btn-ghost btn-sm" style="margin-top:6px" onclick="testarAutoMensagem('bv')">▶ Testar</button>
+    </div>
+  </div>
 
-// ═══════════════════════════════════════════════════════
-// CAPTAÇÃO
-// ═══════════════════════════════════════════════════════
-async function renderCaptacao(){
-  const {data} = await db.from('membros').select('*').eq('origem','captacao').order('criado_em',{ascending:false});
-  const el = document.getElementById('captacao-list');
-  document.getElementById('captacao-count').textContent = data?.length? `(${data.length})` : '';
-  if(!data||!data.length){ el.innerHTML='<div class="empty" style="padding:14px"><p>Nenhum cadastro ainda</p></div>'; return; }
-  el.innerHTML = data.map(c=>`
-    <div class="cont-card" onclick="editCont('${c.id}')">
-      <div style="flex:1">
-        <div style="font-weight:700">${c.nome}</div>
-        <div style="font-size:11px;color:var(--gray)">${c.telefone||''} · ${new Date(c.criado_em).toLocaleDateString('pt-BR')}</div>
-      </div>
-    </div>`).join('');
-}
-function copiarLink(){
-  const link = window.location.href.split('?')[0]+'?cadastro=1';
-  navigator.clipboard.writeText(link).then(()=>toast('📋 Link copiado!'));
-}
-function compartilharWA(){
-  const link = window.location.href.split('?')[0]+'?cadastro=1';
-  window.open(`https://wa.me/?text=${encodeURIComponent('Cadastre-se no gabinete da Vereadora Luana Marques: '+link)}`,'_blank');
-}
+  <!-- Histórico de envios -->
+  <div class="card">
+    <div class="sec"><div class="sec-title">📋 Histórico de Envios</div>
+      <button class="btn btn-ghost btn-sm" onclick="limparHistoricoWA()">🗑️ Limpar</button>
+    </div>
+    <div id="wa-historico"><p style="font-size:12px;color:var(--gray)">Nenhum envio registrado</p></div>
+  </div>
 
+</div>
+'''
+
+# Inserir antes de </div><!-- /content -->
+content = content.replace('</div><!-- /content -->', wa_page + '\n</div><!-- /content -->')
+
+# 3. Adicionar CSS extra para Z-API no <style>
+extra_css = '''
+.wa-hist-item{padding:8px 0;border-bottom:1px solid var(--gray-l);display:flex;align-items:flex-start;gap:9px}
+.wa-hist-item:last-child{border-bottom:none}
+.wa-status-ok{color:var(--green);font-size:16px}
+.wa-status-err{color:var(--red);font-size:16px}
+'''
+content = content.replace('</style>', extra_css + '\n</style>')
+
+# 4. Adicionar JS do WhatsApp antes de </script>
+wa_js = '''
 // ═══════════════════════════════════════════════════════
-// PROTOCOLOS
+// WHATSAPP Z-API
 // ═══════════════════════════════════════════════════════
-let todosProtos = [];
-async function renderProtos(){
-  const {data} = await db.from('protocolos').select('*,membros(nome)').order('criado_em',{ascending:false});
-  todosProtos = data||[];
-  _renderProtoLista(todosProtos);
-  preencheSelectConts();
-}
-const statusColors={Aberto:'var(--blue)',Em_andamento:'var(--yellow)',Urgente:'var(--red)',Resolvido:'var(--green)',Arquivado:'var(--gray)'};
-function _renderProtoLista(lista){
-  const el=document.getElementById('proto-list');
-  const em=document.getElementById('pr-empty');
-  if(!lista.length){ el.innerHTML=''; em.style.display='block'; return; }
-  em.style.display='none';
-  el.innerHTML=lista.map(p=>`
-    <div class="proto-card" onclick="editProto('${p.id}')"
-      style="border-left-color:${p.status==='Urgente'?'var(--red)':p.status==='Resolvido'?'var(--green)':p.status==='Em andamento'?'var(--yellow)':'var(--blue)' }">
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
-        <span style="font-size:10px;font-weight:800;color:var(--gray)">${p.numero}</span>
-        <span class="badge ${p.status==='Urgente'?'br':p.status==='Resolvido'?'bg':p.status==='Em andamento'?'by':'bb'}">${p.status}</span>
-        <span class="badge bgr">${p.assunto}</span>
-      </div>
-      <div style="font-weight:700;font-size:13px">${p.titulo}</div>
-      ${p.membros?`<div style="font-size:11px;color:var(--gray)">👤 ${p.membros.nome}</div>`:''}</div>`).join('');
-}
-function filtPr(){
-  const assunto = document.getElementById('filtro-assunto').value;
-  _renderProtoLista(assunto? todosProtos.filter(p=>p.assunto===assunto) : todosProtos);
-}
-function filtPrTexto(el){
-  const q=el.value.toLowerCase();
-  _renderProtoLista(todosProtos.filter(p=>(p.titulo+p.numero+p.assunto+p.status).toLowerCase().includes(q)));
-}
-async function editProto(id){
-  const p = id?todosProtos.find(x=>x.id===id):null;
-  document.getElementById('proto-id').value       = p?.id||'';
-  document.getElementById('proto-titulo').value   = p?.titulo||'';
-  document.getElementById('proto-assunto').value  = p?.assunto||'Saúde';
-  document.getElementById('proto-status').value   = p?.status||'Aberto';
-  document.getElementById('proto-prio').value     = p?.prioridade||'Normal';
-  document.getElementById('proto-prazo').value    = p?.prazo||'';
-  document.getElementById('proto-membro').value   = p?.membro_id||'';
-  document.getElementById('proto-desc').value     = p?.descricao||'';
-  document.getElementById('m-proto-title').textContent = p?'✏️ Editar Protocolo':'📋 Novo Protocolo';
-  document.getElementById('btn-del-proto').style.display = (p&&currentPerfil?.role==='admin')?'block':'none';
-  const chatArea = document.getElementById('proto-chat-area');
-  if(p?.id){
-    chatArea.style.display='block';
-    await loadMsgsProto(p.id);
-  } else { chatArea.style.display='none'; }
-  openM('m-proto');
-}
-async function loadMsgsProto(pid){
-  const {data} = await db.from('mensagens').select('*,perfis(nome)').eq('protocolo_id',pid).order('criado_em');
-  const el = document.getElementById('proto-chat-msgs');
-  if(!data||!data.length){ el.innerHTML='<p style="font-size:11px;color:var(--gray)">Nenhuma mensagem ainda</p>'; return; }
-  el.innerHTML = data.map(m=>`
-    <div class="msg-bubble msg-${m.tipo==='whatsapp_enviado'?'wa':m.tipo==='sistema'?'sistema':'interno'}">
-      <div style="font-size:10px;font-weight:700;color:var(--gray-d);margin-bottom:2px">
-        ${m.perfis?.nome||'Sistema'} · ${new Date(m.criado_em).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}
-      </div>
-      ${m.texto}
-    </div>`).join('');
-  el.scrollTop=el.scrollHeight;
-}
-async function enviarMensagemProto(){
-  const pid=document.getElementById('proto-id').value;
-  const txt=document.getElementById('proto-chat-input').value.trim();
-  if(!pid||!txt) return;
-  await db.from('mensagens').insert({protocolo_id:pid,autor_id:currentUser.id,texto:txt,tipo:'interno'});
-  document.getElementById('proto-chat-input').value='';
-  await loadMsgsProto(pid);
-}
-async function enviarMensagemProtoWA(){
-  const pid=document.getElementById('proto-id').value;
-  const txt=document.getElementById('proto-chat-input').value.trim();
-  if(!pid||!txt){ toast('Digite uma mensagem'); return; }
-  const proto=todosProtos.find(x=>x.id===pid);
-  if(!proto?.membros?.nome){ toast('Associe um contato ao protocolo'); return; }
-  const membro=todosConts.find(x=>x.id===proto.membro_id);
-  if(!membro?.telefone){ toast('Contato sem telefone cadastrado'); return; }
-  const ok = await _enviarWA(membro.telefone, `*Protocolo ${proto.numero}*\\n${txt}`);
-  if(ok){
-    await db.from('mensagens').insert({protocolo_id:pid,autor_id:currentUser.id,texto:txt,tipo:'whatsapp_enviado'});
-    document.getElementById('proto-chat-input').value='';
-    await loadMsgsProto(pid);
-  }
-}
-async function salvarProto(){
-  const id=document.getElementById('proto-id').value;
-  const dados={
-    titulo:      document.getElementById('proto-titulo').value.trim(),
-    assunto:     document.getElementById('proto-assunto').value,
-    status:      document.getElementById('proto-status').value,
-    prioridade:  document.getElementById('proto-prio').value,
-    prazo:       document.getElementById('proto-prazo').value||null,
-    membro_id:   document.getElementById('proto-membro').value||null,
-    descricao:   document.getElementById('proto-desc').value.trim(),
-    criado_por:  currentUser.id,
-  };
-  if(!dados.titulo){ toast('❌ Título obrigatório'); return; }
-  showLoad();
-  if(id){ await db.from('protocolos').update(dados).eq('id',id); }
-  else  { await db.from('protocolos').insert(dados); }
-  hideLoad(); closeM('m-proto');
-  await renderProtos(); await loadStats();
-  toast('✅ Protocolo salvo!');
-}
-async function delProto(){
-  const id=document.getElementById('proto-id').value;
-  if(!id||!confirm('Excluir protocolo?')) return;
-  showLoad();
-  await db.from('mensagens').delete().eq('protocolo_id',id);
-  await db.from('protocolos').delete().eq('id',id);
-  hideLoad(); closeM('m-proto');
-  await renderProtos(); await loadStats();
-  toast('🗑️ Protocolo excluído');
-}
-function preencheSelectConts(){
-  const sel=document.getElementById('proto-membro');
-  const val=sel.value;
-  sel.innerHTML='<option value="">-- nenhum --</option>';
-  todosConts.forEach(c=>{
-    const o=document.createElement('option');
-    o.value=c.id; o.textContent=c.nome+(c.telefone?' ('+c.telefone+')':'');
-    sel.appendChild(o);
+function getWAConfig(){return ld('gl_wa_config',{instance:'',token:'',clientToken:''})}
+function svWAConfig(v){sv('gl_wa_config',v)}
+function getWALog(){return ld('gl_wa_log',[])}
+function svWALog(v){sv('gl_wa_log',v)}
+function getAutoConfig(){return ld('gl_wa_auto',{anivOn:false,anivMsg:'',bvOn:false,bvMsg:''})}
+function svAutoConfig(v){sv('gl_wa_auto',v)}
+
+let disparoAtivo = false;
+let disparoStop = false;
+
+function initWAPage(){
+  const cfg = getWAConfig();
+  if(cfg.instance) document.getElementById('wa-instance').value = cfg.instance;
+  if(cfg.token) document.getElementById('wa-token').value = cfg.token;
+  if(cfg.clientToken) document.getElementById('wa-client-token').value = cfg.clientToken;
+  
+  const auto = getAutoConfig();
+  document.getElementById('auto-aniv-on').checked = !!auto.anivOn;
+  document.getElementById('auto-aniv-msg').value = auto.anivMsg || 'Olá {{nome}}! 🎂 A Vereadora Luana Marques deseja a você um feliz aniversário! Muitas felicidades! 💎';
+  document.getElementById('auto-bv-on').checked = !!auto.bvOn;
+  document.getElementById('auto-bv-msg').value = auto.bvMsg || 'Olá {{nome}}! 💎 Você foi cadastrado(a) na equipe da Vereadora Luana Marques. Acompanhe nossas novidades!';
+  
+  // preenche selects
+  preencheWAConts();
+  renderHistoricoWA();
+  
+  // char counter
+  const msgEl = document.getElementById('wa-msg-ind');
+  if(msgEl) msgEl.addEventListener('input', ()=>{
+    document.getElementById('wa-char-count').textContent = msgEl.value.length + ' caracteres';
   });
-  if(val) sel.value=val;
+  
+  // badge status
+  atualizarBadgeWA();
 }
 
-// ═══════════════════════════════════════════════════════
-// AGENDA
-// ═══════════════════════════════════════════════════════
-let todosAgs=[];
-async function renderAg(){
-  const {data}=await db.from('agenda').select('*').order('inicio');
-  todosAgs=data||[];
-  _renderAgLista(todosAgs);
-}
-function _renderAgLista(lista){
-  const el=document.getElementById('ag-list');
-  if(!lista.length){ el.innerHTML='<div class="empty"><div class="empty-icon">📅</div><p>Nenhum evento</p></div>'; return; }
-  const tipoIcon={Reunião:'🤝',Evento:'🎉',Audiência:'⚖️',Sessão:'🏛️',Visita:'🚗',Outro:'📌'};
-  el.innerHTML=lista.map(a=>{
-    const d=new Date(a.inicio);
-    return `<div class="proto-card" onclick="editAgenda('${a.id}')">
-      <div style="display:flex;gap:8px;align-items:center">
-        <div style="text-align:center;min-width:40px;background:var(--pink-ll);border-radius:8px;padding:4px">
-          <div style="font-size:16px;font-weight:900;color:var(--pink)">${d.getDate()}</div>
-          <div style="font-size:9px;color:var(--gray)">${d.toLocaleString('pt-BR',{month:'short'}).toUpperCase()}</div>
-        </div>
-        <div>
-          <div style="font-weight:700">${tipoIcon[a.tipo]||'📌'} ${a.titulo}</div>
-          <div style="font-size:11px;color:var(--gray)">${d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}${a.local?' · '+a.local:''}</div>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
-function filtAg(el){
-  const q=el.value.toLowerCase();
-  _renderAgLista(todosAgs.filter(a=>(a.titulo+(a.local||'')+(a.tipo||'')).toLowerCase().includes(q)));
-}
-function editAgenda(id){
-  const a=id?todosAgs.find(x=>x.id===id):null;
-  document.getElementById('ag-id').value    = a?.id||'';
-  document.getElementById('ag-titulo').value= a?.titulo||'';
-  document.getElementById('ag-tipo').value  = a?.tipo||'Reunião';
-  document.getElementById('ag-inicio').value= a?.inicio?a.inicio.slice(0,16):'';
-  document.getElementById('ag-fim').value   = a?.fim?a.fim.slice(0,16):'';
-  document.getElementById('ag-local').value = a?.local||'';
-  document.getElementById('ag-desc').value  = a?.descricao||'';
-  document.getElementById('m-ag-title').textContent = a?'✏️ Editar Evento':'📅 Novo Evento';
-  document.getElementById('btn-del-ag').style.display = (a&&currentPerfil?.role==='admin')?'block':'none';
-  openM('m-ag');
-}
-async function salvarAg(){
-  const id=document.getElementById('ag-id').value;
-  const dados={
-    titulo:    document.getElementById('ag-titulo').value.trim(),
-    tipo:      document.getElementById('ag-tipo').value,
-    inicio:    document.getElementById('ag-inicio').value,
-    fim:       document.getElementById('ag-fim').value||null,
-    local:     document.getElementById('ag-local').value.trim(),
-    descricao: document.getElementById('ag-desc').value.trim(),
-    criado_por:currentUser.id,
-  };
-  if(!dados.titulo||!dados.inicio){ toast('❌ Título e início obrigatórios'); return; }
-  showLoad();
-  if(id){ await db.from('agenda').update(dados).eq('id',id); }
-  else  { await db.from('agenda').insert(dados); }
-  hideLoad(); closeM('m-ag');
-  await renderAg(); await loadStats();
-  toast('✅ Evento salvo!');
-}
-async function delAg(){
-  const id=document.getElementById('ag-id').value;
-  if(!id||!confirm('Excluir evento?')) return;
-  showLoad();
-  await db.from('agenda').delete().eq('id',id);
-  hideLoad(); closeM('m-ag');
-  await renderAg(); await loadStats();
-  toast('🗑️ Evento excluído');
+function atualizarBadgeWA(){
+  const cfg = getWAConfig();
+  const badge = document.getElementById('wa-status-badge');
+  if(!badge) return;
+  if(cfg.instance && cfg.token){
+    badge.className = 'badge bg';
+    badge.textContent = 'Configurado';
+  } else {
+    badge.className = 'badge bgr';
+    badge.textContent = 'Desconectado';
+  }
 }
 
-// ═══════════════════════════════════════════════════════
-// LEMBRETES
-// ═══════════════════════════════════════════════════════
-async function renderLem(){
-  const {data}=await db.from('lembretes').select('*').eq('dono_id',currentUser.id).order('criado_em',{ascending:false});
-  const el=document.getElementById('lem-list');
-  const pending=(data||[]).filter(l=>!l.concluido).length;
-  const badge=document.getElementById('nav-lem-b');
-  badge.style.display=pending?'block':'none';
-  badge.textContent=pending;
-  if(!data||!data.length){ el.innerHTML='<div class="empty"><div class="empty-icon">📌</div><p>Nenhum lembrete</p></div>'; return; }
-  el.innerHTML=data.map(l=>`
-    <div class="card" style="opacity:${l.concluido?.6:1}">
-      <div style="display:flex;align-items:center;gap:10px">
-        <input type="checkbox" ${l.concluido?'checked':''} onchange="toggleLem('${l.id}',${!l.concluido})" style="width:18px;height:18px;cursor:pointer"/>
-        <span style="flex:1;font-size:13px;text-decoration:${l.concluido?'line-through':'none'}">${l.texto}</span>
-        <button class="btn btn-red btn-sm" style="padding:4px 8px" onclick="delLem('${l.id}')">🗑️</button>
-      </div>
-    </div>`).join('');
-}
-async function salvarLem(){
-  const txt=document.getElementById('lem-texto').value.trim();
-  if(!txt){ toast('❌ Escreva algo'); return; }
-  await db.from('lembretes').insert({texto:txt,dono_id:currentUser.id});
-  document.getElementById('lem-texto').value='';
-  closeM('m-lem'); await renderLem();
-  toast('✅ Lembrete salvo!');
-}
-async function toggleLem(id,val){
-  await db.from('lembretes').update({concluido:val}).eq('id',id);
-  await renderLem();
-}
-async function delLem(id){
-  await db.from('lembretes').delete().eq('id',id);
-  await renderLem();
-}
-
-// ═══════════════════════════════════════════════════════
-// ANIVERSARIANTES
-// ═══════════════════════════════════════════════════════
-async function renderAniversariantes(){
-  const {data}=await db.from('membros').select('nome,nascimento,telefone').not('nascimento','is',null);
-  const hoje=new Date();
-  const dd=String(hoje.getDate()).padStart(2,'0');
-  const mm=String(hoje.getMonth()+1).padStart(2,'0');
-  const hojeMD=mm+'-'+dd;
-  const hoje30=new Date(hoje); hoje30.setDate(hoje30.getDate()+30);
-  const anivHoje=[], anivProx=[];
-  (data||[]).forEach(c=>{
-    if(!c.nascimento) return;
-    const parts=c.nascimento.split('-');
-    const md=parts[1]+'-'+parts[2];
-    if(md===hojeMD) { anivHoje.push(c); return; }
-    const dAniv=new Date(hoje.getFullYear(),parseInt(parts[1])-1,parseInt(parts[2]));
-    if(dAniv<hoje) dAniv.setFullYear(hoje.getFullYear()+1);
-    if(dAniv<=hoje30) anivProx.push({...c,_dAniv:dAniv});
-  });
-  anivProx.sort((a,b)=>a._dAniv-b._dAniv);
-  const fmt=c=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--gray-l)">
-    <span style="font-size:18px">🎂</span>
-    <div style="flex:1"><div style="font-weight:700;font-size:13px">${c.nome}</div>
-    <div style="font-size:11px;color:var(--gray)">${c.nascimento.split('-').reverse().join('/')}${c.telefone?' · '+c.telefone:''}</div></div>
-    ${c.telefone?`<a href="https://wa.me/55${c.telefone.replace(/\\D/g,'')}" target="_blank" class="btn btn-green btn-sm" style="padding:4px 8px">💬</a>`:''}
-  </div>`;
-  document.getElementById('aniv-hoje-list').innerHTML  = anivHoje.length?anivHoje.map(fmt).join(''):'<p style="font-size:12px;color:var(--gray)">Nenhum hoje</p>';
-  document.getElementById('aniv-prox-list').innerHTML  = anivProx.length?anivProx.map(fmt).join(''):'<p style="font-size:12px;color:var(--gray)">Nenhum nos próximos 30 dias</p>';
-}
-
-// ═══════════════════════════════════════════════════════
-// WHATSAPP (Z-API)
-// ═══════════════════════════════════════════════════════
 function salvarConfigWA(){
-  waConfig={
+  const cfg = {
     instance: document.getElementById('wa-instance').value.trim(),
-    token:    document.getElementById('wa-token').value.trim(),
+    token: document.getElementById('wa-token').value.trim(),
+    clientToken: document.getElementById('wa-client-token').value.trim()
   };
-  localStorage.setItem('wa_config',JSON.stringify(waConfig));
-  toast('✅ Configuração WA salva!');
+  if(!cfg.instance || !cfg.token){ toast('⚠️ Preencha Instance ID e Token'); return; }
+  svWAConfig(cfg);
+  atualizarBadgeWA();
+  toast('✅ Configuração Z-API salva!');
 }
-async function _enviarWA(telefone, mensagem){
-  if(!waConfig.instance||!waConfig.token){
-    toast('⚠️ Configure a Z-API primeiro (aba WhatsApp)');
-    return false;
-  }
-  const num = telefone.replace(/\\D/g,'');
-  const fone = num.startsWith('55')?num:'55'+num;
-  try{
-    const r = await fetch(
-      `https://api.z-api.io/instances/${waConfig.instance}/token/${waConfig.token}/send-text`,
-      {method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({phone:fone,message:mensagem})}
-    );
-    const d = await r.json();
-    if(d.zaapId||d.messageId){
-      // Log
-      await db.from('whatsapp_log').insert({
-        telefone:fone,mensagem,status:'enviado',enviado_em:new Date().toISOString()
-      });
-      toast('✅ WhatsApp enviado!');
-      await renderWAHistorico();
-      return true;
+
+async function testarConexaoWA(){
+  const cfg = getWAConfig();
+  if(!cfg.instance || !cfg.token){ toast('⚠️ Configure a Z-API primeiro'); return; }
+  toast('🔌 Testando conexão...');
+  try {
+    const url = `https://api.z-api.io/instances/${cfg.instance}/token/${cfg.token}/status`;
+    const headers = {'Content-Type':'application/json'};
+    if(cfg.clientToken) headers['Client-Token'] = cfg.clientToken;
+    const resp = await fetch(url, {method:'GET', headers});
+    const data = await resp.json();
+    if(data.connected || data.value === 'CONNECTED'){
+      toast('✅ WhatsApp conectado!');
+      document.getElementById('wa-status-badge').className = 'badge bg';
+      document.getElementById('wa-status-badge').textContent = '✅ Conectado';
+    } else {
+      toast('⚠️ WhatsApp não conectado. Verifique o QR Code na Z-API.');
+      document.getElementById('wa-status-badge').className = 'badge by';
+      document.getElementById('wa-status-badge').textContent = '⚠️ Desconectado';
     }
-    toast('❌ Erro WA: '+(d.error||JSON.stringify(d)));
-    return false;
-  } catch(e){ toast('❌ Erro: '+e.message); return false; }
+  } catch(e){
+    toast('❌ Erro ao conectar: ' + e.message);
+  }
 }
-async function enviarWA(){
-  const tel = document.getElementById('wa-para').value.trim();
-  const msg = document.getElementById('wa-msg').value.trim();
-  if(!tel||!msg){ toast('Preencha telefone e mensagem'); return; }
-  const ok=await _enviarWA(tel,msg);
-  if(ok){ document.getElementById('wa-para').value=''; document.getElementById('wa-msg').value=''; }
+
+function toggleWAInfo(){
+  const el = document.getElementById('wa-config-info');
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
 }
-async function enviarWAContato(){
-  const tel=document.getElementById('c-tel').value.trim();
-  const msg=document.getElementById('cont-wa-msg').value.trim();
-  if(!tel||!msg){ toast('Preencha a mensagem'); return; }
-  const ok=await _enviarWA(tel,msg);
-  if(ok) document.getElementById('cont-wa-msg').value='';
+
+function preencheWAConts(){
+  const conts = getConts();
+  const sel = document.getElementById('wa-dest-cont');
+  if(!sel) return;
+  sel.innerHTML = '<option value="">— Selecionar contato —</option>' +
+    conts.filter(c=>c.tel).map(c=>`<option value="${c.id}">${c.nome} (${c.tel})</option>`).join('');
 }
-async function renderWAHistorico(){
-  const {data}=await db.from('whatsapp_log').select('*').order('criado_em',{ascending:false}).limit(30);
-  const el=document.getElementById('wa-historico');
-  if(!data||!data.length){ el.innerHTML='<p style="font-size:12px;color:var(--gray)">Nenhum envio ainda</p>'; return; }
-  el.innerHTML=data.map(w=>`
-    <div style="padding:8px 0;border-bottom:1px solid var(--gray-l)">
-      <div style="display:flex;align-items:center;gap:6px">
-        <span class="badge ${w.status==='enviado'?'bg':'br'}">${w.status}</span>
-        <span style="font-size:11px;font-weight:700">${w.telefone}</span>
-        <span style="font-size:10px;color:var(--gray);margin-left:auto">${new Date(w.criado_em).toLocaleString('pt-BR')}</span>
+
+function preencheWADest(){
+  const id = document.getElementById('wa-dest-cont').value;
+  if(!id) return;
+  const c = getConts().find(x=>x.id===id);
+  if(c && c.tel) document.getElementById('wa-dest-tel').value = c.tel;
+}
+
+function insertVar(v){
+  const el = document.getElementById('wa-msg-ind');
+  if(!el) return;
+  const s = el.selectionStart, e = el.selectionEnd;
+  el.value = el.value.substring(0,s) + v + el.value.substring(e);
+  el.selectionStart = el.selectionEnd = s + v.length;
+  el.focus();
+}
+
+function formatarTelWA(tel){
+  const nums = tel.replace(/\\D/g,'');
+  return nums.startsWith('55') ? nums : '55' + nums;
+}
+
+function aplicarVariaveis(msg, contato){
+  return msg
+    .replace(/{{nome}}/gi, contato.nome || '')
+    .replace(/{{bairro}}/gi, contato.bairro || '')
+    .replace(/{{cidade}}/gi, contato.cidade || 'Novo Gama');
+}
+
+async function enviarZAPI(telefone, mensagem){
+  const cfg = getWAConfig();
+  if(!cfg.instance || !cfg.token) throw new Error('Z-API não configurada');
+  const fone = formatarTelWA(telefone);
+  const url = `https://api.z-api.io/instances/${cfg.instance}/token/${cfg.token}/send-text`;
+  const headers = {'Content-Type':'application/json'};
+  if(cfg.clientToken) headers['Client-Token'] = cfg.clientToken;
+  const resp = await fetch(url, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({phone: fone, message: mensagem})
+  });
+  const data = await resp.json();
+  if(resp.ok && (data.zaapId || data.messageId || data.id)) return {ok:true, data};
+  throw new Error(data.error || data.message || 'Erro no envio');
+}
+
+function registrarEnvio(tel, nome, msg, status, erro=''){
+  const log = getWALog();
+  log.unshift({
+    id: 'w'+Date.now(),
+    tel, nome, msg: msg.substring(0,60),
+    status, erro,
+    ts: new Date().toLocaleString('pt-BR')
+  });
+  svWALog(log.slice(0, 200));
+  renderHistoricoWA();
+}
+
+async function enviarWAIndividual(){
+  const cfg = getWAConfig();
+  if(!cfg.instance || !cfg.token){ toast('⚠️ Configure a Z-API primeiro'); return; }
+  
+  let tel = document.getElementById('wa-dest-tel').value.trim();
+  const contId = document.getElementById('wa-dest-cont').value;
+  const msg = document.getElementById('wa-msg-ind').value.trim();
+  
+  if(!tel){ toast('⚠️ Informe o número de WhatsApp'); return; }
+  if(!msg){ toast('⚠️ Digite a mensagem'); return; }
+  
+  const cont = contId ? getConts().find(c=>c.id===contId) : {nome: tel, bairro:'', cidade:''};
+  const msgFinal = aplicarVariaveis(msg, cont || {nome:tel, bairro:'', cidade:''});
+  
+  const btn = document.querySelector('#page-whatsapp .btn[onclick="enviarWAIndividual()"]');
+  if(btn){ btn.disabled=true; btn.textContent='Enviando...'; }
+  
+  try {
+    await enviarZAPI(tel, msgFinal);
+    registrarEnvio(tel, cont?.nome||tel, msgFinal, 'ok');
+    toast('✅ Mensagem enviada com sucesso!');
+    document.getElementById('wa-msg-ind').value = '';
+    document.getElementById('wa-dest-tel').value = '';
+    document.getElementById('wa-dest-cont').value = '';
+    document.getElementById('wa-char-count').textContent = '0 caracteres';
+  } catch(e){
+    registrarEnvio(tel, cont?.nome||tel, msgFinal, 'erro', e.message);
+    toast('❌ Erro: ' + e.message);
+  } finally {
+    if(btn){ btn.disabled=false; btn.textContent='📲 Enviar WhatsApp'; }
+  }
+}
+
+function previewDestinatarios(){
+  const tipo = document.getElementById('wa-filtro-tipo').value;
+  const env = document.getElementById('wa-filtro-env').value;
+  const lista = filtrarDestinatarios(tipo, env);
+  const el = document.getElementById('wa-preview-dest');
+  el.style.display = 'block';
+  if(!lista.length){ el.innerHTML='<em>Nenhum contato com WhatsApp encontrado para este filtro</em>'; return; }
+  el.innerHTML = `<strong>${lista.length} destinatário(s):</strong><br/>` +
+    lista.map(c=>`• ${c.nome} — ${c.tel}`).join('<br/>');
+}
+
+function filtrarDestinatarios(tipo, env){
+  return getConts().filter(c=>{
+    if(!c.tel) return false;
+    if(tipo !== 'todos' && c.tipo !== tipo) return false;
+    if(env !== 'todos' && c.env !== env) return false;
+    return true;
+  });
+}
+
+async function iniciarDisparo(){
+  const cfg = getWAConfig();
+  if(!cfg.instance || !cfg.token){ toast('⚠️ Configure a Z-API primeiro'); return; }
+  
+  const msg = document.getElementById('wa-msg-massa').value.trim();
+  if(!msg){ toast('⚠️ Digite a mensagem do disparo'); return; }
+  
+  const tipo = document.getElementById('wa-filtro-tipo').value;
+  const env = document.getElementById('wa-filtro-env').value;
+  const lista = filtrarDestinatarios(tipo, env);
+  
+  if(!lista.length){ toast('⚠️ Nenhum contato com WhatsApp neste filtro'); return; }
+  if(!confirm(`Enviar mensagem para ${lista.length} contato(s)?\\n\\nIsso pode demorar alguns minutos.`)) return;
+  
+  const intervalo = Math.max(2, parseInt(document.getElementById('wa-intervalo').value)||4) * 1000;
+  
+  disparoStop = false;
+  disparoAtivo = true;
+  document.getElementById('wa-progress').style.display = 'block';
+  document.getElementById('btn-disparar').disabled = true;
+  document.getElementById('btn-disparar').textContent = '⏳ Disparando...';
+  
+  let ok=0, err=0;
+  for(let i=0; i<lista.length; i++){
+    if(disparoStop) break;
+    const c = lista[i];
+    const msgFinal = aplicarVariaveis(msg, c);
+    const pct = Math.round((i+1)/lista.length*100);
+    document.getElementById('wa-prog-txt').textContent = `Enviando ${i+1}/${lista.length}...`;
+    document.getElementById('wa-prog-bar').style.width = pct+'%';
+    document.getElementById('wa-prog-sub').textContent = `✅ ${ok} enviados · ❌ ${err} erros · Para: ${c.nome}`;
+    try {
+      await enviarZAPI(c.tel, msgFinal);
+      registrarEnvio(c.tel, c.nome, msgFinal, 'ok');
+      ok++;
+    } catch(e){
+      registrarEnvio(c.tel, c.nome, msgFinal, 'erro', e.message);
+      err++;
+    }
+    if(i < lista.length-1) await new Promise(r=>setTimeout(r, intervalo));
+  }
+  
+  disparoAtivo = false;
+  document.getElementById('btn-disparar').disabled = false;
+  document.getElementById('btn-disparar').textContent = '🚀 Iniciar Disparo';
+  document.getElementById('wa-prog-txt').textContent = disparoStop ? `⏹ Parado — ${ok} enviados · ${err} erros` : `✅ Concluído — ${ok} enviados · ${err} erros`;
+  document.getElementById('wa-prog-bar').style.background = err > 0 ? 'var(--orange)' : 'var(--green)';
+  toast(disparoStop ? `⏹ Disparo parado (${ok} enviados)` : `✅ Disparo concluído! ${ok} enviados, ${err} erros`);
+}
+
+function pararDisparo(){
+  disparoStop = true;
+  toast('⏹ Parando disparo após o envio atual...');
+}
+
+function renderHistoricoWA(){
+  const log = getWALog();
+  const el = document.getElementById('wa-historico');
+  if(!el) return;
+  if(!log.length){ el.innerHTML='<p style="font-size:12px;color:var(--gray)">Nenhum envio registrado</p>'; return; }
+  el.innerHTML = log.slice(0,50).map(w=>`
+    <div class="wa-hist-item">
+      <span class="${w.status==='ok'?'wa-status-ok':'wa-status-err'}">${w.status==='ok'?'✅':'❌'}</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${w.nome||w.tel}</div>
+        <div style="font-size:11px;color:var(--gray)">${w.msg}${w.msg.length>=60?'...':''}</div>
+        ${w.erro?`<div style="font-size:10px;color:var(--red)">${w.erro}</div>`:''}
       </div>
-      <div style="font-size:12px;color:var(--gray-d);margin-top:3px">${w.mensagem.substring(0,80)}${w.mensagem.length>80?'...':''}</div>
+      <span style="font-size:10px;color:var(--gray);flex-shrink:0">${w.ts}</span>
     </div>`).join('');
 }
 
-// ═══════════════════════════════════════════════════════
-// PERFIL / USUÁRIOS
-// ═══════════════════════════════════════════════════════
-async function salvarPerfil(){
-  const dados={
-    nome:     document.getElementById('perfil-nome-input').value.trim(),
-    whatsapp: document.getElementById('perfil-wa-input').value.trim()||null,
+function limparHistoricoWA(){
+  if(!confirm('Limpar todo o histórico de envios?')) return;
+  svWALog([]);
+  renderHistoricoWA();
+  toast('🗑️ Histórico limpo');
+}
+
+function salvarAuto(){
+  const auto = {
+    anivOn: document.getElementById('auto-aniv-on').checked,
+    anivMsg: document.getElementById('auto-aniv-msg').value,
+    bvOn: document.getElementById('auto-bv-on').checked,
+    bvMsg: document.getElementById('auto-bv-msg').value
   };
-  showLoad();
-  await db.from('perfis').update(dados).eq('id',currentUser.id);
-  currentPerfil={...currentPerfil,...dados};
-  updateHeader();
-  hideLoad();
-  toast('✅ Perfil salvo!');
-}
-async function alterarSenha(){
-  const nova=document.getElementById('nova-senha').value;
-  if(nova.length<6){ toast('❌ Mínimo 6 caracteres'); return; }
-  showLoad();
-  const {error}=await db.auth.updateUser({password:nova});
-  hideLoad();
-  if(error){ toast('❌ '+error.message); }
-  else{ document.getElementById('nova-senha').value=''; toast('✅ Senha alterada!'); }
-}
-async function renderUsers(){
-  if(currentPerfil?.role!=='admin') return;
-  const {data}=await db.from('perfis').select('*').order('nome');
-  const el=document.getElementById('user-list');
-  if(!data||!data.length){ el.innerHTML=''; return; }
-  const roleMap={admin:'🔑 Admin',colaborador:'✏️ Colab',visitante:'👁️ Visitante'};
-  const cls={admin:'role-admin',colaborador:'role-colab',visitante:'role-visit'};
-  el.innerHTML=data.map(u=>`
-    <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--gray-l)">
-      <div style="flex:1">
-        <div style="font-weight:700;font-size:13px">${u.nome}</div>
-        <div style="font-size:11px;color:var(--gray)">${u.email}</div>
-      </div>
-      <span class="badge ${cls[u.role]||'bgr'}">${roleMap[u.role]||u.role}</span>
-      <select onchange="mudarRole('${u.id}',this.value)" style="font-size:11px;border:1.5px solid var(--gray-l);border-radius:8px;padding:4px">
-        <option value="admin" ${u.role==='admin'?'selected':''}>Admin</option>
-        <option value="colaborador" ${u.role==='colaborador'?'selected':''}>Colab</option>
-        <option value="visitante" ${u.role==='visitante'?'selected':''}>Visitante</option>
-      </select>
-    </div>`).join('');
-}
-async function mudarRole(id,role){
-  await db.from('perfis').update({role}).eq('id',id);
-  toast('✅ Perfil atualizado');
-}
-async function criarUsuario(){
-  const email=document.getElementById('u-email').value.trim();
-  const nome =document.getElementById('u-nome').value.trim();
-  const role =document.getElementById('u-role').value;
-  const senha=document.getElementById('u-senha').value;
-  if(!email||!nome||senha.length<6){ toast('❌ Preencha todos os campos (senha mín. 6 chars)'); return; }
-  showLoad();
-  // Cria via Admin API (precisa de service_role key no backend)
-  // Como estamos em frontend, usamos signUp e depois admin atualiza role
-  const {data,error}=await db.auth.signUp({
-    email,password:senha,
-    options:{data:{nome,role}}
-  });
-  hideLoad();
-  if(error){ toast('❌ '+error.message); return; }
-  toast('✅ Usuário criado! Peça para ele confirmar o e-mail.');
-  closeM('m-user');
-  await renderUsers();
+  svAutoConfig(auto);
+  toast('✅ Configuração de automação salva!');
 }
 
-// ═══════════════════════════════════════════════════════
-// FORMULÁRIO PÚBLICO
-// ═══════════════════════════════════════════════════════
-function showPub(){
-  document.getElementById('loginScreen').style.display='none';
-  document.getElementById('pubScreen').style.display='block';
-}
-function voltarLogin(){
-  document.getElementById('pubScreen').style.display='none';
-  document.getElementById('loginScreen').style.display='flex';
-}
-async function pubSubmit(){
-  const nome = document.getElementById('pub-nome').value.trim();
-  const tel  = document.getElementById('pub-tel').value.trim();
-  if(!nome||!tel){ showPubMsg('❌ Nome e telefone são obrigatórios','var(--red)'); return; }
-  showLoad();
-  const {error}=await db.from('membros').insert({
-    nome,
-    telefone:   tel,
-    email:      document.getElementById('pub-email').value.trim()||null,
-    nascimento: document.getElementById('pub-nasc').value||null,
-    bairro:     document.getElementById('pub-bairro').value.trim(),
-    cidade:     document.getElementById('pub-cidade').value.trim()||'Novo Gama',
-    vota_em:    document.getElementById('pub-vota').value,
-    observacao: document.getElementById('pub-obs').value.trim(),
-    origem:     'captacao',
-    engajamento:'Neutro',
-  });
-  hideLoad();
-  if(error){ showPubMsg('❌ Erro: '+error.message,'var(--red)'); return; }
-  showPubMsg('✅ Cadastro realizado! Obrigado pelo apoio!','var(--green)');
-  ['pub-nome','pub-tel','pub-email','pub-nasc','pub-bairro','pub-obs'].forEach(id=>document.getElementById(id).value='');
-}
-function showPubMsg(msg,color){
-  const el=document.getElementById('pub-msg');
-  el.style.display='block';
-  el.style.color=color;
-  el.style.background=color.replace(')',',0.08)').replace('var','rgba').replace('--red','198,40,40').replace('--green','27,94,32');
-  el.style.padding='10px';el.style.borderRadius='10px';el.style.fontWeight='700';el.style.fontSize='13px';
-  el.textContent=msg;
+async function testarAutoMensagem(tipo){
+  const cfg = getWAConfig();
+  if(!cfg.instance || !cfg.token){ toast('⚠️ Configure a Z-API primeiro'); return; }
+  const auto = getAutoConfig();
+  const msg = tipo==='aniv' ? auto.anivMsg : auto.bvMsg;
+  if(!msg){ toast('⚠️ Configure a mensagem automática primeiro'); return; }
+  const tel = prompt('Número de WhatsApp para teste (com DDD):');
+  if(!tel) return;
+  try {
+    const msgFinal = aplicarVariaveis(msg, {nome:'Fulano(a)', bairro:'Centro', cidade:'Novo Gama'});
+    await enviarZAPI(tel, msgFinal);
+    registrarEnvio(tel, 'Teste automação', msgFinal, 'ok');
+    toast('✅ Mensagem de teste enviada!');
+  } catch(e){
+    toast('❌ Erro: ' + e.message);
+  }
 }
 
-// ═══════════════════════════════════════════════════════
-// INIT — verifica sessão existente
-// ═══════════════════════════════════════════════════════
-async function init(){
-  // Verifica se veio pelo link de captação
-  if(window.location.search.includes('cadastro=1')){
-    showPub(); return;
+// Verificar aniversariantes do dia e enviar mensagem automática
+async function verificarEnviosAutomaticos(){
+  const auto = getAutoConfig();
+  if(!auto.anivOn && !auto.bvOn) return;
+  const cfg = getWAConfig();
+  if(!cfg.instance || !cfg.token) return;
+  
+  const hoje = new Date();
+  const hd = hoje.getDate();
+  const hm = hoje.getMonth() + 1;
+  
+  if(auto.anivOn && auto.anivMsg){
+    const conts = getConts();
+    const anivHoje = conts.filter(c=>{
+      if(!c.tel || !c.nasc) return false;
+      const p = c.nasc.split('/');
+      return p.length>=2 && parseInt(p[0])===hd && parseInt(p[1])===hm;
+    });
+    const jaEnviados = ld('gl_wa_aniv_'+hoje.toISOString().split('T')[0], []);
+    for(const c of anivHoje){
+      if(jaEnviados.includes(c.id)) continue;
+      try {
+        await enviarZAPI(c.tel, aplicarVariaveis(auto.anivMsg, c));
+        registrarEnvio(c.tel, c.nome, auto.anivMsg, 'ok');
+        jaEnviados.push(c.id);
+        sv('gl_wa_aniv_'+hoje.toISOString().split('T')[0], jaEnviados);
+        await new Promise(r=>setTimeout(r, 3000));
+      } catch(e){ registrarEnvio(c.tel, c.nome, auto.anivMsg, 'erro', e.message); }
+    }
   }
-  showLoad();
-  const {data}=await db.auth.getSession();
-  hideLoad();
-  if(data?.session?.user){
-    await iniciarSessao(data.session.user);
-  }
-  // Ouve mudanças de auth
-  db.auth.onAuthStateChange(async(_,session)=>{
-    if(session?.user&&!currentUser) await iniciarSessao(session.user);
-    if(!session) {currentUser=null; document.getElementById('loginScreen').style.display='flex';}
-  });
 }
-init();
-</script>
-</body>
-</html>
+'''
+
+# Inserir JS antes do fechamento do script
+content = content.replace(
+    "window.addEventListener('DOMContentLoaded', ()=>{",
+    wa_js + "\nwindow.addEventListener('DOMContentLoaded', ()=>{"
+)
+
+# 5. Atualizar goTo para inicializar WA
+content = content.replace(
+    "  if(p==='termometro') renderTermometro();",
+    "  if(p==='termometro') renderTermometro();\n  if(p==='whatsapp') initWAPage();"
+)
+
+# 6. Chamar verificação de automáticos no initApp
+content = content.replace(
+    "  if(currentUser && currentUser.role === 'admin'){",
+    "  verificarEnviosAutomaticos();\n  if(currentUser && currentUser.role === 'admin'){"
+)
+
+# 7. Chamar preencheWAConts ao salvar contato
+content = content.replace(
+    "  preencheSelectConts();\n  toast('✅ Contato salvo!');",
+    "  preencheSelectConts();\n  preencheWAConts();\n  toast('✅ Contato salvo!');"
+)
+
+# Verificar
+print('nav-whatsapp:', 'nav-whatsapp' in content)
+print('page-whatsapp:', 'page-whatsapp' in content)
+print('enviarZAPI:', 'enviarZAPI' in content)
+print('iniciarDisparo:', 'iniciarDisparo' in content)
+print('mensagens automáticas:', 'verificarEnviosAutomaticos' in content)
+print('Total chars:', len(content))
+
+with open('/mnt/user-data/outputs/gabinete-luana-whatsapp.html', 'w') as f:
+    f.write(content)
+
+print('Arquivo salvo!')
+PYEOF
